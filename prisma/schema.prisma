@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Sensor {
+  sensorId     BigInt        @id @map("sensor_id")
+  metadata     Json
+  observations Observation[]
+
+  @@map("sensors")
+}
+
+model Observation {
+  sensorId   BigInt   @map("sensor_id")
+  observedAt DateTime @map("observed_at") @db.Timestamptz(6)
+  speed      Float    @db.DoublePrecision
+  flags      Json     @default("[]")
+  sourceFile String   @map("source_file")
+  sourceRow  BigInt   @map("source_row")
+  ingestedAt DateTime @default(now()) @map("ingested_at") @db.Timestamptz(6)
+  sensor     Sensor   @relation(fields: [sensorId], references: [sensorId], onDelete: Restrict, onUpdate: Cascade)
+
+  @@id([sensorId, observedAt])
+  @@index([observedAt])
+  @@map("observations")
+}
+
+model QuarantineRecord {
+  quarantineId BigInt   @id @default(autoincrement()) @map("quarantine_id")
+  sourceFile   String   @map("source_file")
+  sourceRow    BigInt   @map("source_row")
+  sensorId     BigInt?  @map("sensor_id")
+  rawSensorId  String?  @map("raw_sensor_id")
+  rawTimestamp String?  @map("raw_timestamp")
+  rawSpeed     String?  @map("raw_speed")
+  reason       String
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([reason])
+  @@map("quarantine_records")
+}
