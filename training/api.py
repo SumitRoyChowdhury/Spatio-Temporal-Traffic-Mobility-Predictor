@@ -36,6 +36,7 @@ from training.predict_speed import (
     predict,
 )
 from training.sensor_health import SensorHealthService
+from training.explainability import ExplainabilityService
 
 LOGGER = logging.getLogger("gridlock.api")
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -87,6 +88,7 @@ class DashboardServer(ThreadingHTTPServer):
         self.model_lock = threading.Lock()
         self._meta: dict[str, Any] | None = None
         self.health_service = SensorHealthService()
+        self.explainability_service = ExplainabilityService(artifacts_dir)
         ensemble_path = artifacts_dir / ENSEMBLE_FILE
         self.evaluation: dict[str, Any] | None = (
             json.loads(ensemble_path.read_text(encoding="utf-8"))
@@ -227,6 +229,37 @@ class DashboardHandler(BaseHTTPRequestHandler):
                     self._json(HTTPStatus.NOT_FOUND, {"error": f"Sensor {sid} not found."})
                 else:
                     self._json(HTTPStatus.OK, detail)
+            # --- Explainable AI (XAI) APIs ---
+            elif path == "/api/explainability/models":
+                self._json(HTTPStatus.OK, {"models": self.server.explainability_service.get_available_models()})
+            elif path == "/api/explainability/feature-importance":
+                m = (query.get("model") or ["ensemble"])[0]
+                self._json(HTTPStatus.OK, self.server.explainability_service.get_global_feature_importance(m))
+            elif path == "/api/explainability/beeswarm":
+                m = (query.get("model") or ["ensemble"])[0]
+                self._json(HTTPStatus.OK, self.server.explainability_service.get_beeswarm_data(m))
+            elif path == "/api/explainability/prediction":
+                self._explain_prediction(query, {})
+            elif path == "/api/explainability/model-comparison":
+                sensor_text = (query.get("sensor_id") or [""])[0]
+                timestamp_text = (query.get("timestamp") or [""])[0]
+                if not sensor_text.isdigit():
+                    self._json(HTTPStatus.BAD_REQUEST, {"error": "Choose a location (sensor)."})
+                    return
+                try:
+                    ts = parse_timestamp(timestamp_text)
+                except ValueError:
+                    self._json(HTTPStatus.BAD_REQUEST, {"error": "Enter a valid date and time."})
+                    return
+                comparison = self.server.explainability_service.compare_models(int(sensor_text), ts)
+                self._json(HTTPStatus.OK, comparison)
+            elif re.match(r"^/api/explainability/history/(\d+)$", path) or path == "/api/explainability/history":
+                match = re.match(r"^/api/explainability/history/(\d+)$", path)
+                sid_str = match.group(1) if match else (query.get("sensor_id") or [""])[0]
+                sid = int(sid_str) if sid_str.isdigit() else None
+                limit = int((query.get("limit") or ["20"])[0])
+                history = self.server.explainability_service.get_explanation_history(sid, limit=limit)
+                self._json(HTTPStatus.OK, {"sensor_id": sid, "history": history})
             elif path.startswith("/api/"):
                 self._json(HTTPStatus.NOT_FOUND, {"error": "Unknown endpoint."})
             else:
@@ -275,10 +308,42 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 self._json(HTTPStatus.OK, result)
                 return
 
+            # POST /api/explainability/prediction
+            if path == "/api/explainability/prediction":
+                self._explain_prediction({}, body)
+                return
+
             self._json(HTTPStatus.NOT_FOUND, {"error": f"Unknown endpoint: {path}"})
         except Exception:
             LOGGER.exception("Mutation request failed: %s", self.path)
             self._json(HTTPStatus.INTERNAL_SERVER_ERROR, {"error": "Internal server error."})
+
+    def _explain_prediction(self, query: dict[str, list[str]], body: dict[str, Any]) -> None:
+        sensor_val = body.get("sensor_id") or (query.get("sensor_id") or [""])[0]
+        timestamp_val = body.get("timestamp") or (query.get("timestamp") or [""])[0]
+        model_val = body.get("model") or (query.get("model") or ["ensemble"])[0]
+
+        if not str(sensor_val).isdigit():
+            self._json(HTTPStatus.BAD_REQUEST, {"error": "Choose a location (sensor)."})
+            return
+        try:
+            ts = parse_timestamp(str(timestamp_val))
+        except ValueError:
+            self._json(HTTPStatus.BAD_REQUEST, {"error": "Enter a valid date and time."})
+            return
+
+        try:
+            explanation = self.server.explainability_service.explain_prediction(
+                int(sensor_val), ts, model_name=str(model_val)
+            )
+            self._json(HTTPStatus.OK, explanation)
+        except InsufficientDataError as error:
+            self._json(
+                HTTPStatus.UNPROCESSABLE_ENTITY,
+                {"error": str(error), "insufficient_data": True, **getattr(error, "result", {})},
+            )
+        except ValueError as error:
+            self._json(HTTPStatus.BAD_REQUEST, {"error": str(error)})
 
     def _predict(self, query: dict[str, list[str]]) -> None:
         sensor_text = (query.get("sensor_id") or [""])[0]
