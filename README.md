@@ -1,8 +1,10 @@
 # Gridlock traffic data pipeline
 
-This Node.js pipeline validates the wide traffic-speed CSV against the sensor
-metadata CSV and persists normalized observations and rejected records to
-PostgreSQL using Prisma. It requires Node.js 20+ and does not use Python.
+The Node.js ingestion pipeline validates the wide traffic-speed CSV against the
+sensor metadata CSV and persists normalized observations and rejected records
+to PostgreSQL using Prisma. An independent Python training workflow reads the
+validated observations from PostgreSQL and trains XGBoost, CatBoost, and
+LightGBM models.
 
 ## Setup
 
@@ -17,7 +19,7 @@ PostgreSQL using Prisma. It requires Node.js 20+ and does not use Python.
    npm test
    ```
 
-3. Run from the project directory:
+3. Run ingestion from the project directory:
 
    ```sh
    npm run pipeline
@@ -25,9 +27,9 @@ PostgreSQL using Prisma. It requires Node.js 20+ and does not use Python.
 
 Input paths can be changed with `--train path.csv` and
 `--metadata path.csv`. The default files are `train_data.csv` and
-`PEMS-BAY-META.csv`. The pipeline uses Prisma ORM with the PostgreSQL driver adapter. Create/update
-schema objects with Prisma `db push` before running it; `db push` does not reset
-or drop existing data. The pipeline can be rerun safely.
+`PEMS-BAY-META.csv`. The ingestion pipeline uses Prisma ORM with the PostgreSQL driver adapter.
+Create/update schema objects with Prisma `db push` before running it; `db push`
+does not reset or drop existing data. The pipeline can be rerun safely.
 
 ## Validation behavior
 
@@ -70,3 +72,63 @@ FROM quarantine_records
 GROUP BY reason
 ORDER BY reason;
 ```
+
+## Python environment
+
+Set up the Python environment from the project root:
+
+```sh
+python3 -m venv .venv
+./.venv/bin/python -m pip install -r requirements.txt
+./.venv/bin/python -m unittest discover -s test
+```
+
+The training and prediction scripts read `DATABASE_URL` from `.env` if present
+(it accepts the project's `.env.example` URI); otherwise they use the standard
+`PGHOST`, `PGPORT`, `PGUSER`, `PGPASSWORD`, and `PGDATABASE` variables.
+Defaults target the local PostgreSQL socket, user `sumitroychowdhury`, and
+database `gridlock_train_data`. No password is stored in the repository.
+
+## Predict speed from historical references
+
+This workflow predicts the speed at a sensor (location) and timestamp `t`
+from that sensor's speed at the same time:
+
+- one day earlier (`t - 1 day`),
+- one week earlier (`t - 7 days`, the same weekday), and
+- one year earlier (same date and time last year; Feb 29 uses Feb 28).
+
+Both training and prediction read from `gridlock_train_data`. A missing or
+invalid reference (missing row, `NaN`, negative or above 200) is passed to the
+models as a missing value, so they use whichever references exist. If all
+three are missing, no prediction is made. Instead the script logs
+`Current data is not sufficient to predict the traffic speed` and exits with
+status 3.
+
+Train XGBoost, CatBoost, and LightGBM on every observation that has at least
+one reference:
+
+```sh
+./.venv/bin/python -m training.train_reference_models
+```
+
+This writes `reference_{xgboost.json,catboost.cbm,lightgbm.txt}` and
+`reference_metrics.json` to `model_artifacts/`. The metrics compare each
+model with a baseline that averages the available references, broken down by
+which references were available. `--sample-fraction 0.05` gives a quick trial
+run. Then predict:
+
+```sh
+./.venv/bin/python -m training.predict_speed --sensor-id 400001 --timestamp 2017-05-15T08:30:00
+```
+
+Timestamps without an offset are treated as UTC, like ingestion, and are rounded
+to the nearest five-minute slot. The JSON output lists each reference's
+timestamp and speed, which references were used, each model's prediction and
+their mean. When the target time is already in the database, it also shows
+the recorded `actual_speed`.
+
+The current dataset covers only January to May 2017, so the previous-year
+reference is never available. The models learn from the previous-day and
+previous-week references only. A previous-year speed found later has no
+effect until the models are retrained on more than a year of data.

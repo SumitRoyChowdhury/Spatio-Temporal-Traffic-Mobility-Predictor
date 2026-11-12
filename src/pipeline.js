@@ -14,7 +14,6 @@ import {
 
 const BATCH_SIZE = 5_000;
 const EXISTING_QUERY_SIZE = 1_000;
-const EXPECTED_INTERVAL_MS = 5 * 60 * 1000;
 
 function databaseUrl() {
   if (process.env.DATABASE_URL) return process.env.DATABASE_URL;
