@@ -7,12 +7,13 @@ datasource db {
 }
 
 model Sensor {
-  sensorId      BigInt                 @id @map("sensor_id")
+  sensorId      BigInt                  @id @map("sensor_id")
   metadata      Json
   observations  Observation[]
   configuration SensorConfiguration?
   healthHistory SensorHealthHistory[]
   alerts        SensorAlert[]
+  explanations  PredictionExplanation[]
 
   @@map("sensors")
 }
@@ -94,4 +95,24 @@ model QuarantineRecord {
 
   @@index([reason])
   @@map("quarantine_records")
+}
+
+model PredictionExplanation {
+  id                BigInt   @id @default(autoincrement())
+  sensorId          BigInt   @map("sensor_id")
+  targetTimestamp   DateTime @map("target_timestamp") @db.Timestamptz(6)
+  modelName         String   @map("model_name")
+  baselineValue     Float    @map("baseline_value")
+  predictedValue    Float    @map("predicted_value")
+  featureValues     Json     @map("feature_values")
+  shapValues        Json     @map("shap_values")
+  textExplanation   String   @map("text_explanation")
+  explanationMethod String   @default("TreeSHAP") @map("explanation_method")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  sensor            Sensor   @relation(fields: [sensorId], references: [sensorId], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([sensorId, targetTimestamp])
+  @@index([modelName])
+  @@index([createdAt])
+  @@map("prediction_explanations")
 }
