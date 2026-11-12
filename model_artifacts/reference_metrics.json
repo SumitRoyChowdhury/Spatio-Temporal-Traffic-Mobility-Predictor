@@ -385,7 +385,7 @@
         }
       },
       "best_iteration": 104,
-      "training_seconds": 67.9,
+      "training_seconds": 46.18,
       "model_file": "reference_xgboost.json"
     },
     "catboost": {
@@ -401,7 +401,7 @@
         }
       },
       "best_iteration": 499,
-      "training_seconds": 730.93,
+      "training_seconds": 1818.43,
       "model_file": "reference_catboost.cbm"
     },
     "lightgbm": {
@@ -417,7 +417,7 @@
         }
       },
       "best_iteration": 137,
-      "training_seconds": 30.52,
+      "training_seconds": 98.98,
       "model_file": "reference_lightgbm.txt"
     }
   },
@@ -426,5 +426,5 @@
     "catboost": "reference_catboost.cbm",
     "lightgbm": "reference_lightgbm.txt"
   },
-  "total_seconds": 891.92
+  "total_seconds": 1998.15
 }

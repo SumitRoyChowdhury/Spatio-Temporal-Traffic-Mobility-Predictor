@@ -3,6 +3,7 @@ import SensorMap from "./SensorMap.jsx";
 import Evaluation from "./Evaluation.jsx";
 import ThemeToggle from "./ThemeToggle.jsx";
 import AnomalyDetection from "./AnomalyDetection.jsx";
+import SensorHealth from "./SensorHealth.jsx";
 
 const MODELS = [
   { key: "xgboost", label: "XGBoost" },
@@ -90,13 +91,16 @@ function groupSensors(sensors) {
 const TABS = [
   { id: "forecast", label: "Traffic Forecast" },
   { id: "anomaly", label: "Anomaly Detection" },
+  { id: "health", label: "Sensor Health" },
 ];
 
 function getInitialTab() {
   if (typeof window !== "undefined") {
     if (window.location.hash === "#anomaly") return "anomaly";
+    if (window.location.hash === "#health") return "health";
     const params = new URLSearchParams(window.location.search);
     if (params.get("tab") === "anomaly") return "anomaly";
+    if (params.get("tab") === "health") return "health";
   }
   return "forecast";
 }
@@ -112,6 +116,7 @@ export default function App() {
   useEffect(() => {
     function handleHash() {
       if (window.location.hash === "#anomaly") setActiveTab("anomaly");
+      else if (window.location.hash === "#health") setActiveTab("health");
       else if (!window.location.hash || window.location.hash === "#forecast") setActiveTab("forecast");
     }
     window.addEventListener("hashchange", handleHash);
@@ -255,6 +260,11 @@ export default function App() {
       {/* ─── Anomaly Detection tab ─── */}
       {activeTab === "anomaly" && (
         <AnomalyDetection meta={meta} groups={groups} sensorsById={sensorsById} />
+      )}
+
+      {/* ─── Sensor Health Monitoring tab ─── */}
+      {activeTab === "health" && (
+        <SensorHealth meta={meta} groups={groups} />
       )}
     </div>
   );

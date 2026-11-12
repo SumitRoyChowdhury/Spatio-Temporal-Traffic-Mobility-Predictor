@@ -4,7 +4,7 @@ const WIDTH = 600;
 const PADDING = 16;
 
 // Plots sensors by latitude/longitude (equirectangular, scaled by cos(lat)).
-export default function SensorMap({ sensors, selectedId, onSelect }) {
+export default function SensorMap({ sensors, selectedId, onSelect, statusMap }) {
   const [hovered, setHovered] = useState(null);
 
   const { points, height } = useMemo(() => {
@@ -21,13 +21,17 @@ export default function SensorMap({ sensors, selectedId, onSelect }) {
     const mapHeight = Math.round(spanY * scale + PADDING * 2);
     return {
       height: mapHeight,
-      points: located.map((sensor) => ({
-        sensor,
-        x: PADDING + (sensor.longitude - minLon) * xScale * scale,
-        y: PADDING + (maxLat - sensor.latitude) * scale,
-      })),
+      points: located.map((sensor) => {
+        const health = statusMap?.get(sensor.sensor_id) || (sensor.status ? sensor : null);
+        return {
+          sensor,
+          health,
+          x: PADDING + (sensor.longitude - minLon) * xScale * scale,
+          y: PADDING + (maxLat - sensor.latitude) * scale,
+        };
+      }),
     };
-  }, [sensors]);
+  }, [sensors, statusMap]);
 
   if (!points.length) return null;
   const selected = points.find((p) => p.sensor.sensor_id === selectedId);
@@ -40,9 +44,13 @@ export default function SensorMap({ sensors, selectedId, onSelect }) {
         aria-label="Map of sensor locations; select a dot to choose a location"
         onMouseLeave={() => setHovered(null)}
       >
-        {points.map((point) => (
-          <circle key={point.sensor.sensor_id} className="dot" cx={point.x} cy={point.y} r="3" />
-        ))}
+        {points.map((point) => {
+          const st = point.health?.status?.toLowerCase();
+          const dotClass = st ? `dot dot-${st}` : "dot";
+          return (
+            <circle key={point.sensor.sensor_id} className={dotClass} cx={point.x} cy={point.y} r="3.5" />
+          );
+        })}
         {selected && (
           <>
             <circle className="dot-halo" cx={selected.x} cy={selected.y} r="14" />
@@ -74,6 +82,15 @@ export default function SensorMap({ sensors, selectedId, onSelect }) {
           <span>
             Fwy {hovered.sensor.freeway} {hovered.sensor.direction} · {hovered.sensor.sensor_id}
           </span>
+          {hovered.health?.status && (
+            <div className="tooltip-health">
+              <span className={`status-indicator status-indicator-${hovered.health.status.toLowerCase()}`} />
+              <span>{hovered.health.status}</span>
+              {hovered.health.data_quality != null && (
+                <span> · {hovered.health.data_quality}% quality</span>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

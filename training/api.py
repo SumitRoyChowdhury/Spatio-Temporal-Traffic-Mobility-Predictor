@@ -18,7 +18,9 @@ import argparse
 import json
 import logging
 import mimetypes
+import re
 import threading
+import time
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -33,6 +35,7 @@ from training.predict_speed import (
     parse_timestamp,
     predict,
 )
+from training.sensor_health import SensorHealthService
 
 LOGGER = logging.getLogger("gridlock.api")
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -83,12 +86,28 @@ class DashboardServer(ThreadingHTTPServer):
         self.models, self.metrics = load_models(artifacts_dir)
         self.model_lock = threading.Lock()
         self._meta: dict[str, Any] | None = None
+        self.health_service = SensorHealthService()
         ensemble_path = artifacts_dir / ENSEMBLE_FILE
         self.evaluation: dict[str, Any] | None = (
             json.loads(ensemble_path.read_text(encoding="utf-8"))
             if ensemble_path.is_file()
             else None
         )
+        self._stop_monitor = threading.Event()
+        self._monitor_thread = threading.Thread(target=self._background_monitor_loop, daemon=True)
+        self._monitor_thread.start()
+
+    def _background_monitor_loop(self) -> None:
+        # Run periodic monitoring cycle every 60s
+        while not self._stop_monitor.wait(60):
+            try:
+                self.health_service.run_monitoring_cycle()
+            except Exception:
+                LOGGER.exception("Error in background health monitor loop")
+
+    def server_close(self) -> None:
+        self._stop_monitor.set()
+        super().server_close()
 
     @property
     def meta(self) -> dict[str, Any]:
@@ -109,27 +128,156 @@ class DashboardHandler(BaseHTTPRequestHandler):
         self.send_header("Content-Type", "application/json")
         self.send_header("Content-Length", str(len(payload)))
         self.send_header("Cache-Control", "no-store")
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PATCH, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
         self.wfile.write(payload)
 
+    def do_OPTIONS(self) -> None:  # noqa: N802
+        self.send_response(HTTPStatus.NO_CONTENT)
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Methods", "GET, POST, PATCH, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type")
+        self.end_headers()
+
+    def _read_json_body(self) -> dict[str, Any]:
+        content_length = int(self.headers.get("Content-Length", 0))
+        if content_length <= 0:
+            return {}
+        raw = self.rfile.read(content_length).decode("utf-8")
+        try:
+            return json.loads(raw)
+        except Exception:
+            return {}
+
     def do_GET(self) -> None:  # noqa: N802
         url = urlsplit(self.path)
+        path = url.path.rstrip("/")
+        query = parse_qs(url.query)
         try:
-            if url.path == "/api/meta":
+            if path == "/api/meta":
                 self._json(HTTPStatus.OK, self.server.meta)
-            elif url.path == "/api/evaluation":
+            elif path == "/api/evaluation":
                 if self.server.evaluation is None:
                     self._json(HTTPStatus.NOT_FOUND, {"error": "No evaluation has been run yet."})
                 else:
                     self._json(HTTPStatus.OK, self.server.evaluation)
-            elif url.path == "/api/predict":
-                self._predict(parse_qs(url.query))
-            elif url.path.startswith("/api/"):
+            elif path == "/api/predict":
+                self._predict(query)
+            # --- Sensor Health Monitoring APIs ---
+            elif path in ("/api/sensors/health", "/api/sensors/health/summary"):
+                ref_time = (query.get("ref_time") or [None])[0]
+                summary = self.server.health_service.get_sensor_health_summary(ref_time)
+                self._json(HTTPStatus.OK, summary)
+            elif path == "/api/sensors/alerts":
+                sev = (query.get("severity") or [None])[0]
+                res_str = (query.get("resolved") or [None])[0]
+                resolved = None
+                if res_str is not None:
+                    resolved = res_str.lower() in ("true", "1", "yes")
+                sensor_id_str = (query.get("sensor_id") or [None])[0]
+                sensor_id = int(sensor_id_str) if sensor_id_str and sensor_id_str.isdigit() else None
+                page = int((query.get("page") or ["1"])[0])
+                limit = int((query.get("limit") or ["50"])[0])
+                alerts = self.server.health_service.get_alerts(
+                    severity=sev, is_resolved=resolved, sensor_id=sensor_id, page=page, limit=limit
+                )
+                self._json(HTTPStatus.OK, alerts)
+            elif path == "/api/sensors":
+                ref_time = (query.get("ref_time") or [None])[0]
+                status_filter = (query.get("status") or [None])[0]
+                location_filter = (query.get("location") or [None])[0]
+                search = (query.get("search") or [None])[0]
+                sort_by = (query.get("sort_by") or [None])[0]
+                order = (query.get("order") or ["asc"])[0]
+                page = int((query.get("page") or ["1"])[0])
+                limit = int((query.get("limit") or ["50"])[0])
+                result = self.server.health_service.get_all_sensors(
+                    reference_time_str=ref_time,
+                    status_filter=status_filter,
+                    location_filter=location_filter,
+                    search=search,
+                    sort_by=sort_by,
+                    order=order,
+                    page=page,
+                    limit=limit,
+                )
+                self._json(HTTPStatus.OK, result)
+            elif re.match(r"^/api/sensors/\d+/history$", path):
+                match = re.match(r"^/api/sensors/(\d+)/history$", path)
+                sid = int(match.group(1))
+                days = int((query.get("days") or ["7"])[0])
+                ref_time = (query.get("ref_time") or [None])[0]
+                history = self.server.health_service.get_sensor_history(sid, days=days, reference_time_str=ref_time)
+                self._json(HTTPStatus.OK, {"sensor_id": sid, "history": history})
+            elif re.match(r"^/api/sensors/\d+/readings$", path):
+                match = re.match(r"^/api/sensors/(\d+)/readings$", path)
+                sid = int(match.group(1))
+                limit = int((query.get("limit") or ["50"])[0])
+                ref_time = (query.get("ref_time") or [None])[0]
+                readings = self.server.health_service.get_sensor_readings(sid, limit=limit, reference_time_str=ref_time)
+                self._json(HTTPStatus.OK, {"sensor_id": sid, "readings": readings})
+            elif re.match(r"^/api/sensors/\d+$", path):
+                match = re.match(r"^/api/sensors/(\d+)$", path)
+                sid = int(match.group(1))
+                ref_time = (query.get("ref_time") or [None])[0]
+                detail = self.server.health_service.get_sensor_details(sid, reference_time_str=ref_time)
+                if not detail:
+                    self._json(HTTPStatus.NOT_FOUND, {"error": f"Sensor {sid} not found."})
+                else:
+                    self._json(HTTPStatus.OK, detail)
+            elif path.startswith("/api/"):
                 self._json(HTTPStatus.NOT_FOUND, {"error": "Unknown endpoint."})
             else:
                 self._static(url.path)
         except Exception:  # pragma: no cover - last-resort error response
             LOGGER.exception("Request failed: %s", self.path)
+            self._json(HTTPStatus.INTERNAL_SERVER_ERROR, {"error": "Internal server error."})
+
+    def do_PATCH(self) -> None:  # noqa: N802
+        self._handle_mutation()
+
+    def do_POST(self) -> None:  # noqa: N802
+        self._handle_mutation()
+
+    def _handle_mutation(self) -> None:
+        url = urlsplit(self.path)
+        path = url.path.rstrip("/")
+        body = self._read_json_body()
+        try:
+            # Resolve alert: /api/sensors/alerts/<id>/resolve
+            resolve_match = re.match(r"^/api/sensors/alerts/(\d+)/resolve$", path)
+            if resolve_match:
+                alert_id = int(resolve_match.group(1))
+                resolved = self.server.health_service.resolve_alert(alert_id)
+                if not resolved:
+                    self._json(HTTPStatus.NOT_FOUND, {"error": f"Alert {alert_id} not found."})
+                else:
+                    self._json(HTTPStatus.OK, resolved)
+                return
+
+            # Update sensor config: /api/sensors/<id>/config
+            config_match = re.match(r"^/api/sensors/(\d+)/config$", path)
+            if config_match:
+                sensor_id = int(config_match.group(1))
+                updated = self.server.health_service.update_sensor_config(sensor_id, **body)
+                if not updated:
+                    self._json(HTTPStatus.BAD_REQUEST, {"error": "Invalid configuration payload."})
+                else:
+                    self._json(HTTPStatus.OK, updated)
+                return
+
+            # Trigger manual monitoring check: /api/sensors/health/check
+            if path == "/api/sensors/health/check":
+                ref_time = body.get("ref_time")
+                result = self.server.health_service.run_monitoring_cycle(ref_time)
+                self._json(HTTPStatus.OK, result)
+                return
+
+            self._json(HTTPStatus.NOT_FOUND, {"error": f"Unknown endpoint: {path}"})
+        except Exception:
+            LOGGER.exception("Mutation request failed: %s", self.path)
             self._json(HTTPStatus.INTERNAL_SERVER_ERROR, {"error": "Internal server error."})
 
     def _predict(self, query: dict[str, list[str]]) -> None:

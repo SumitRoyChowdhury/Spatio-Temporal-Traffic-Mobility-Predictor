@@ -7,11 +7,63 @@ datasource db {
 }
 
 model Sensor {
-  sensorId     BigInt        @id @map("sensor_id")
-  metadata     Json
-  observations Observation[]
+  sensorId      BigInt                 @id @map("sensor_id")
+  metadata      Json
+  observations  Observation[]
+  configuration SensorConfiguration?
+  healthHistory SensorHealthHistory[]
+  alerts        SensorAlert[]
 
   @@map("sensors")
+}
+
+model SensorConfiguration {
+  id               BigInt   @id @default(autoincrement())
+  sensorId         BigInt   @unique @map("sensor_id")
+  expectedInterval Int      @default(300) @map("expected_interval")
+  delayedThreshold Int      @default(900) @map("delayed_threshold")
+  offlineThreshold Int      @default(1800) @map("offline_threshold")
+  isActive         Boolean  @default(true) @map("is_active")
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt        DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  sensor           Sensor   @relation(fields: [sensorId], references: [sensorId], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("sensor_configurations")
+}
+
+model SensorHealthHistory {
+  id              BigInt    @id @default(autoincrement())
+  sensorId        BigInt    @map("sensor_id")
+  status          String
+  lastReceivedAt  DateTime? @map("last_received_at") @db.Timestamptz(6)
+  checkedAt       DateTime  @default(now()) @map("checked_at") @db.Timestamptz(6)
+  dataQuality     Float     @default(100.0) @map("data_quality")
+  missingReadings Int       @default(0) @map("missing_readings")
+  uptime24h       Float     @default(100.0) @map("uptime_24h")
+  uptime7d        Float     @default(100.0) @map("uptime_7d")
+  uptime30d       Float     @default(100.0) @map("uptime_30d")
+  sensor          Sensor    @relation(fields: [sensorId], references: [sensorId], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([sensorId, checkedAt])
+  @@index([checkedAt])
+  @@map("sensor_health_history")
+}
+
+model SensorAlert {
+  id         BigInt    @id @default(autoincrement())
+  sensorId   BigInt    @map("sensor_id")
+  alertType  String    @map("alert_type")
+  severity   String
+  message    String
+  isResolved Boolean   @default(false) @map("is_resolved")
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  resolvedAt DateTime? @map("resolved_at") @db.Timestamptz(6)
+  sensor     Sensor    @relation(fields: [sensorId], references: [sensorId], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([sensorId, isResolved])
+  @@index([createdAt])
+  @@index([isResolved])
+  @@map("sensor_alerts")
 }
 
 model Observation {

@@ -225,3 +225,113 @@ The `Dockerfile` builds the dashboard and serves it with the API. The trained
 model files in `model_artifacts/` are committed so the image can load them.
 Free Render services sleep after about 15 idle minutes; the first visit
 afterwards takes 30–60 seconds.
+
+## Real-Time Sensor Health Monitoring System
+
+GridLock includes an integrated **Sensor Health Monitoring System** providing continuous real-time telemetry, transmission delay detection, missing data auditing, data quality scoring, and uptime analytics across all 325 freeway sensors.
+
+### Architecture
+
+```
+PostgreSQL (observations, quarantine_records)
+   │
+   ├──> SensorHealthService (training/sensor_health.py)
+   │       ├── Threshold Evaluator (ONLINE, DELAYED, OFFLINE)
+   │       ├── Data Quality & Missing Observations Auditor
+   │       ├── Uptime Calculator (24h, 7d, 30d)
+   │       └── Incident Alert Engine (Deduplication & Auto-Resolution)
+   │
+   ├──> Background Monitor Daemon (60s periodic polling in training/api.py)
+   │
+   └──> Dashboard REST API (:8000)
+           └──> React Sensor Health View (dashboard/src/SensorHealth.jsx)
+                   ├── 6 Overview KPI Cards
+                   ├── Geographical Sensor Status Map
+                   ├── Searchable & Sortable Health Table
+                   ├── Historical SVG Trend Graphs
+                   └── Incident Alert Center & Threshold Editor
+```
+
+### Health Detection Logic
+
+Let:
+- $E$ = Expected reporting interval (default: $300\text{s} = 5\text{ minutes}$)
+- $T$ = Reference evaluation timestamp (UTC)
+- $L$ = Last successful received timestamp (UTC)
+- $D = T - L$
+
+Status determination:
+- **ONLINE**: $D \le E$ (sensor transmitting on schedule)
+- **DELAYED**: $E < D \le 3E$ (transmission lag between 5 and 15 minutes)
+- **OFFLINE**: $D > 3E$ (sensor transmission ceased $> 15\text{ minutes}$)
+- **NOT_ACTIVE**: Sensor explicitly disabled (`is_active = false`)
+
+Thresholds are configurable globally and per-sensor via `sensor_configurations`.
+
+### Metrics & Formulas
+
+- **Data Quality Percentage**:
+  $$\text{Data Quality \%} = \min\left(100, \max\left(0, \frac{\text{Valid Observations}}{\text{Total Expected Observations}} \times 100\right)\right)$$
+  Flags such as `missing_speed`, `non_numeric_speed`, `negative_speed`, `infinite_speed`, and `quarantine_records` count as invalid.
+
+- **Missing Reading Percentage**:
+  $$\text{Missing \%} = \frac{\text{Missing Readings}}{\text{Total Expected Readings}} \times 100$$
+
+- **Operational Uptime**:
+  $$\text{Uptime \%} = \frac{\text{Operational Intervals}}{\text{Total Expected Intervals}} \times 100$$
+  Tracked for 24-hour, 7-day, and 30-day reporting windows.
+
+### Database Tables Added
+
+1. **`sensor_configurations`**:
+   - `sensor_id` (BIGINT, PRIMARY KEY)
+   - `expected_interval` (INT, default 300)
+   - `delayed_threshold` (INT, default 900)
+   - `offline_threshold` (INT, default 1800)
+   - `is_active` (BOOLEAN, default true)
+   - `created_at`, `updated_at` (TIMESTAMPTZ)
+
+2. **`sensor_health_history`**:
+   - `id` (BIGINT, PRIMARY KEY)
+   - `sensor_id` (BIGINT, REFERENCES sensors)
+   - `status` (VARCHAR: ONLINE, DELAYED, OFFLINE, NOT_ACTIVE)
+   - `last_received_at`, `checked_at` (TIMESTAMPTZ)
+   - `data_quality` (FLOAT)
+   - `missing_readings` (INT)
+   - `uptime_24h`, `uptime_7d`, `uptime_30d` (FLOAT)
+
+3. **`sensor_alerts`**:
+   - `id` (BIGINT, PRIMARY KEY)
+   - `sensor_id` (BIGINT, REFERENCES sensors)
+   - `alert_type` (VARCHAR: SENSOR_OFFLINE, REPORTING_DELAYED, DATA_QUALITY_DEGRADED, SENSOR_RECOVERED, COMMUNICATION_FAILURE)
+   - `severity` (VARCHAR: LOW, MEDIUM, HIGH, CRITICAL)
+   - `message` (TEXT)
+   - `is_resolved` (BOOLEAN, default false)
+   - `created_at`, `resolved_at` (TIMESTAMPTZ)
+
+### REST API Endpoints
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/sensors` | List all sensors with calculated health status, search, filters, and pagination |
+| `GET` | `/api/sensors/health/summary` | Aggregate counts (total, online, delayed, offline, avg quality, uptime) |
+| `GET` | `/api/sensors/:id` | Full sensor health profile, 24h quality audit, and thresholds |
+| `GET` | `/api/sensors/:id/history` | 7-day time series points for telemetry consistency and uptime |
+| `GET` | `/api/sensors/:id/readings` | Recent speed observations and validation flags |
+| `GET` | `/api/sensors/alerts` | Active and historical incident alerts filtered by severity and resolution |
+| `PATCH` | `/api/sensors/alerts/:id/resolve` | Mark an alert as resolved |
+| `PATCH` | `/api/sensors/:id/config` | Update sensor reporting interval and alert thresholds |
+| `POST` | `/api/sensors/health/check` | Trigger an immediate monitoring audit cycle |
+
+### Running the Test Suite
+
+Run all unit and integration tests:
+
+```bash
+# Python tests (Model training, anomaly detection, congestion, sensor health)
+./.venv/bin/python -m unittest discover -s test
+
+# Node.js ingestion and validation tests
+npm test
+```
+
