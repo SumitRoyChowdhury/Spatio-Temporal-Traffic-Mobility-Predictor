@@ -38,6 +38,7 @@ from training.predict_speed import (
 from training.sensor_health import SensorHealthService
 from training.explainability import ExplainabilityService
 from training.heatmap import HeatmapService
+from training.simulator import SimulatorService
 
 LOGGER = logging.getLogger("gridlock.api")
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -91,6 +92,7 @@ class DashboardServer(ThreadingHTTPServer):
         self.health_service = SensorHealthService()
         self.explainability_service = ExplainabilityService(artifacts_dir)
         self.heatmap_service = HeatmapService(artifacts_dir, models=self.models, metrics=self.metrics)
+        self.simulator_service = SimulatorService(artifacts_dir=artifacts_dir, heatmap_service=self.heatmap_service)
         ensemble_path = artifacts_dir / ENSEMBLE_FILE
         self.evaluation: dict[str, Any] | None = (
             json.loads(ensemble_path.read_text(encoding="utf-8"))
@@ -305,6 +307,23 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 ts = (query.get("timestamp") or [None])[0]
                 result = self.server.heatmap_service.get_sensor_detail(sid, ts)
                 self._json(HTTPStatus.OK, result)
+            elif path == "/api/simulator/corridors":
+                corridors = self.server.simulator_service.get_available_corridors()
+                self._json(HTTPStatus.OK, {"corridors": corridors})
+            elif path in ("/api/simulator/highway", "/api/simulator/scene"):
+                fwy = (query.get("freeway") or ["85"])[0]
+                direction = (query.get("direction") or ["N"])[0]
+                ts = (query.get("timestamp") or ["2017-05-15T08:30:00"])[0]
+                model = (query.get("model") or ["ensemble"])[0]
+                max_s = int((query.get("max_sensors") or ["8"])[0])
+                scene = self.server.simulator_service.get_highway_scene(
+                    freeway=fwy,
+                    direction=direction,
+                    timestamp_str=ts,
+                    model_name=model,
+                    max_sensors=max_s,
+                )
+                self._json(HTTPStatus.OK, scene)
             elif path.startswith("/api/"):
                 self._json(HTTPStatus.NOT_FOUND, {"error": "Unknown endpoint."})
             else:

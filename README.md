@@ -422,6 +422,44 @@ GridLock provides an advanced **Geographical Traffic Intelligence Heatmap** disp
 | `GET` | `/api/heatmap/comparison/:id` | 24-hour actual vs predicted speed time series with MAE & MAPE |
 | `PATCH` | `/api/heatmap/sensor/:id/config` | Update reference free-flow speed or road category for a sensor |
 
+---
+
+## Immersive AR/VR Traffic Intelligence Simulator
+
+GridLock provides an interactive **3D Highway Traffic Simulator** supporting **WebXR Virtual Reality (VR)**, **WebXR Augmented Reality (AR)**, and **3D Hardware-Accelerated Desktop Simulation**.
+
+### Key 3D & WebXR Features
+
+1. **3D Multi-Lane Highway Environment**:
+   - Physically accurate Caltrans PeMS freeway corridors (CA-85, US-101, I-880, I-280, CA-17, CA-237, CA-87).
+   - Real-world road markings: solid shoulder lines, white dashed divider lines ($3\text{m}$ dashes, $9\text{m}$ gaps), metallic guardrails, and overhead gantry signs.
+   - Dynamic **Congestion Ribbons**: Segment under-glow colored according to real ML traffic speed (Green $\ge 0.70$, Yellow $0.40–0.70$, Red $<0.40$).
+
+2. **WebXR Virtual Reality (VR)**:
+   - Full 6-DoF ($SE(3)$) stereoscopic headset tracking via standard WebXR `immersive-vr`.
+   - Dual spatial VR controllers with luminous laser pointer beams and reticle tips.
+   - Controller trigger selection: Raycast sensor gantries in 3D VR space to inspect live telemetry cards.
+   - Comfortable viewing with multiple camera presets (Aerial Drone, Driver View, Roadside Tower, Sensor Focus).
+
+3. **WebXR Augmented Reality (AR)**:
+   - Real WebXR `immersive-ar` session with planar **hit-testing**.
+   - Circular targeting reticle coplanar to physical desks, tables, or floors.
+   - Tap-to-place: Anchors a miniature ($s = 0.04$) 3D highway corridor on real-world tabletop surfaces.
+
+4. **Dynamic Vehicle Kinematics & Car-Following Physics**:
+   - Adaptive microscopic car-following model preventing vehicle collisions and overlaps.
+   - Dynamic vehicular velocity matching ML model speed predictions (XGBoost, CatBoost, LightGBM, Weighted Ensemble).
+   - Greenshields traffic density scaling ($k = k_j(1 - v/v_f)$) and active brake light illumination during deceleration.
+
+### Simulator REST APIs
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/simulator/corridors` | List available freeway corridors with sensor counts and postmile bounds |
+| `GET` | `/api/simulator/highway` | Complete 3D corridor geometry, sensor telemetry, and Greenshields flow metrics |
+
+---
+
 ### Running the Test Suite
 
 Run all unit and integration tests:
