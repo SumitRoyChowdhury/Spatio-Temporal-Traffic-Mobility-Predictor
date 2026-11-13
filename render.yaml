@@ -1,0 +1,14 @@
+# Render Blueprint: one free Docker web service in Singapore (same region as
+# the Neon database). Set DATABASE_URL to the Neon connection string when
+# Render asks for it.
+services:
+  - type: web
+    name: gridlock-dashboard
+    runtime: docker
+    plan: free
+    region: singapore
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/evaluation
+    envVars:
+      - key: DATABASE_URL
+        sync: false

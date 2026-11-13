@@ -1,0 +1,11 @@
+.git
+.env
+.venv
+node_modules
+dashboard/node_modules
+dashboard/dist
+**/__pycache__
+*.csv
+src
+test
+prisma

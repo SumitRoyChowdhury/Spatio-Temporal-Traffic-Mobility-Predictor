@@ -177,3 +177,26 @@ time. The weights are the non-negative coefficients summing to 1 that minimise
 squared error on the test data. Because they are fitted on that data, the
 script also reports a 6-fold time-blocked cross-validated score. Results go to
 `model_artifacts/ensemble_weights.json`; restart the API to pick them up.
+
+## Free hosting (Neon + Render)
+
+The hosted dashboard uses a trimmed copy of the data: predictions only look
+back one day and one week, so the last 14 days (18–31 May 2017, about 1.3M
+rows, ~135 MB) are enough and fit Neon's free tier. Predictions then work for
+19 May to 7 June 2017.
+
+1. Create a Neon project in **AWS Asia Pacific 1 (Singapore)** and put its
+   direct (non-pooled) connection string in `.env` as `NEON_DATABASE_URL`.
+2. Copy the recent data (drops and recreates `sensors` and `observations` in
+   Neon only):
+   ```bash
+   ./.venv/bin/python -m training.export_recent --days 14
+   ```
+3. On Render, create a **Blueprint** from this repository. `render.yaml`
+   defines one free Docker web service in Singapore; enter the Neon
+   connection string as `DATABASE_URL` when asked.
+
+The `Dockerfile` builds the dashboard and serves it with the API. The trained
+model files in `model_artifacts/` are committed so the image can load them.
+Free Render services sleep after about 15 idle minutes; the first visit
+afterwards takes 30–60 seconds.

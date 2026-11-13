@@ -13,7 +13,7 @@ const REFERENCES = [
   { key: "previous_year_speed", label: "Previous year" },
 ];
 const DEFAULT_SENSOR = 400001;
-const DEFAULT_TIMESTAMP = "2017-05-15T08:30";
+const DEFAULT_TIMESTAMP = "2017-06-01T08:30";
 
 const utcFormat = new Intl.DateTimeFormat("en-GB", {
   day: "numeric",

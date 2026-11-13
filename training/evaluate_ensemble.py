@@ -22,7 +22,6 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-from scipy.optimize import minimize
 
 from training.db import connect
 from training.predict_speed import load_models
@@ -107,6 +106,9 @@ def metrics(actual: np.ndarray, predicted: np.ndarray) -> dict[str, float]:
 
 def fit_weights(predictions: np.ndarray, actual: np.ndarray) -> np.ndarray:
     """Least-squares weights constrained to w >= 0 and sum(w) = 1."""
+    # Imported here so the API, which only reads ENSEMBLE_FILE, does not load SciPy.
+    from scipy.optimize import minimize
+
     count = predictions.shape[1]
 
     def loss(w: np.ndarray) -> float:

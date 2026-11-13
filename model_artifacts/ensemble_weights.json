@@ -1,0 +1,2411 @@
+{
+  "test_file": "first_week_june_2017.csv",
+  "test_start": "2017-06-01T00:00:00+00:00",
+  "test_end": "2017-06-01T23:55:00+00:00",
+  "test_examples": 93600,
+  "test_sensors": 325,
+  "reference_coverage": {
+    "previous_day_speed": 93600,
+    "previous_week_speed": 93600,
+    "previous_year_speed": 0
+  },
+  "models": {
+    "xgboost": {
+      "rmse": 5.025565411413313,
+      "mae": 2.5565234668234473,
+      "mape": 5.930804936914261,
+      "r2": 0.8071560969046125,
+      "bias": -0.2818900460381793
+    },
+    "catboost": {
+      "rmse": 5.040942098639234,
+      "mae": 2.5401244968221532,
+      "mape": 5.8107143746999785,
+      "r2": 0.8059742052794578,
+      "bias": -0.3869550242219717
+    },
+    "lightgbm": {
+      "rmse": 5.009496018256692,
+      "mae": 2.543745695457732,
+      "mape": 5.8432727592916365,
+      "r2": 0.8083873733307546,
+      "bias": -0.3207638585795446
+    }
+  },
+  "best_model": "lightgbm",
+  "weights": {
+    "xgboost": 0.30800312216464587,
+    "catboost": 0.3339994771289305,
+    "lightgbm": 0.35799740070642366
+  },
+  "weighting_method": "Least-squares weights constrained to be non-negative and sum to 1, fitted on the test data",
+  "weighted_ensemble": {
+    "rmse": 4.9966185409477575,
+    "mae": 2.531019623736517,
+    "mape": 5.8244647987885525,
+    "r2": 0.8093712310941823,
+    "bias": -0.33089841766148265
+  },
+  "weighted_ensemble_cross_validated": {
+    "folds": 6,
+    "metrics": {
+      "rmse": 5.025004399160257,
+      "mae": 2.5415655723817614,
+      "mape": 5.8761061194581865,
+      "r2": 0.8071991494748672,
+      "bias": -0.31663333064836524
+    },
+    "fold_weights": [
+      [
+        0.2864369368011137,
+        0.33160772590583776,
+        0.3819553372930486
+      ],
+      [
+        0.42083955329359035,
+        0.3976910349984425,
+        0.18146941170796715
+      ],
+      [
+        0.0812541240831002,
+        0.35057849896144155,
+        0.5681673769554584
+      ],
+      [
+        0.19463826926190225,
+        0.4315277999258836,
+        0.3738339308122143
+      ],
+      [
+        0.6192898984684592,
+        0.020837868369210227,
+        0.35987223316233063
+      ],
+      [
+        0.27848394286103384,
+        0.37216882724569356,
+        0.34934722989327255
+      ]
+    ]
+  },
+  "equal_mean_ensemble": {
+    "rmse": 4.996642322729297,
+    "mae": 2.531210727532159,
+    "mape": 5.826406589210125,
+    "r2": 0.8093694164659536,
+    "bias": -0.3298696429465652
+  },
+  "reference_mean_baseline": {
+    "rmse": 5.3407459289221,
+    "mae": 2.535875573446608,
+    "mape": 5.461841576170513,
+    "r2": 0.782209020028993,
+    "bias": -0.46053792505895985
+  },
+  "timeline": [
+    {
+      "timestamp": "2017-06-01T00:00:00+00:00",
+      "actual": 67.07,
+      "weighted": 66.53,
+      "xgboost": 66.53,
+      "catboost": 66.55,
+      "lightgbm": 66.53
+    },
+    {
+      "timestamp": "2017-06-01T00:05:00+00:00",
+      "actual": 66.76,
+      "weighted": 66.41,
+      "xgboost": 66.41,
+      "catboost": 66.41,
+      "lightgbm": 66.4
+    },
+    {
+      "timestamp": "2017-06-01T00:10:00+00:00",
+      "actual": 66.76,
+      "weighted": 66.27,
+      "xgboost": 66.28,
+      "catboost": 66.25,
+      "lightgbm": 66.27
+    },
+    {
+      "timestamp": "2017-06-01T00:15:00+00:00",
+      "actual": 66.74,
+      "weighted": 66.23,
+      "xgboost": 66.24,
+      "catboost": 66.23,
+      "lightgbm": 66.23
+    },
+    {
+      "timestamp": "2017-06-01T00:20:00+00:00",
+      "actual": 66.65,
+      "weighted": 66.18,
+      "xgboost": 66.2,
+      "catboost": 66.17,
+      "lightgbm": 66.18
+    },
+    {
+      "timestamp": "2017-06-01T00:25:00+00:00",
+      "actual": 66.62,
+      "weighted": 66.09,
+      "xgboost": 66.1,
+      "catboost": 66.09,
+      "lightgbm": 66.08
+    },
+    {
+      "timestamp": "2017-06-01T00:30:00+00:00",
+      "actual": 66.54,
+      "weighted": 66.08,
+      "xgboost": 66.09,
+      "catboost": 66.07,
+      "lightgbm": 66.07
+    },
+    {
+      "timestamp": "2017-06-01T00:35:00+00:00",
+      "actual": 66.48,
+      "weighted": 66.0,
+      "xgboost": 66.02,
+      "catboost": 65.98,
+      "lightgbm": 66.0
+    },
+    {
+      "timestamp": "2017-06-01T00:40:00+00:00",
+      "actual": 66.43,
+      "weighted": 66.04,
+      "xgboost": 66.07,
+      "catboost": 66.03,
+      "lightgbm": 66.03
+    },
+    {
+      "timestamp": "2017-06-01T00:45:00+00:00",
+      "actual": 66.42,
+      "weighted": 66.03,
+      "xgboost": 66.06,
+      "catboost": 66.01,
+      "lightgbm": 66.02
+    },
+    {
+      "timestamp": "2017-06-01T00:50:00+00:00",
+      "actual": 66.38,
+      "weighted": 66.03,
+      "xgboost": 66.06,
+      "catboost": 66.01,
+      "lightgbm": 66.03
+    },
+    {
+      "timestamp": "2017-06-01T00:55:00+00:00",
+      "actual": 66.36,
+      "weighted": 65.89,
+      "xgboost": 65.91,
+      "catboost": 65.87,
+      "lightgbm": 65.87
+    },
+    {
+      "timestamp": "2017-06-01T01:00:00+00:00",
+      "actual": 66.52,
+      "weighted": 65.92,
+      "xgboost": 65.93,
+      "catboost": 65.92,
+      "lightgbm": 65.92
+    },
+    {
+      "timestamp": "2017-06-01T01:05:00+00:00",
+      "actual": 66.49,
+      "weighted": 66.01,
+      "xgboost": 66.07,
+      "catboost": 65.98,
+      "lightgbm": 65.99
+    },
+    {
+      "timestamp": "2017-06-01T01:10:00+00:00",
+      "actual": 66.51,
+      "weighted": 65.97,
+      "xgboost": 66.01,
+      "catboost": 65.94,
+      "lightgbm": 65.95
+    },
+    {
+      "timestamp": "2017-06-01T01:15:00+00:00",
+      "actual": 66.48,
+      "weighted": 66.0,
+      "xgboost": 66.02,
+      "catboost": 66.0,
+      "lightgbm": 65.99
+    },
+    {
+      "timestamp": "2017-06-01T01:20:00+00:00",
+      "actual": 66.28,
+      "weighted": 65.98,
+      "xgboost": 66.01,
+      "catboost": 65.96,
+      "lightgbm": 65.97
+    },
+    {
+      "timestamp": "2017-06-01T01:25:00+00:00",
+      "actual": 66.38,
+      "weighted": 66.01,
+      "xgboost": 66.04,
+      "catboost": 65.99,
+      "lightgbm": 66.01
+    },
+    {
+      "timestamp": "2017-06-01T01:30:00+00:00",
+      "actual": 66.39,
+      "weighted": 66.06,
+      "xgboost": 66.08,
+      "catboost": 66.05,
+      "lightgbm": 66.06
+    },
+    {
+      "timestamp": "2017-06-01T01:35:00+00:00",
+      "actual": 66.36,
+      "weighted": 66.09,
+      "xgboost": 66.11,
+      "catboost": 66.09,
+      "lightgbm": 66.08
+    },
+    {
+      "timestamp": "2017-06-01T01:40:00+00:00",
+      "actual": 66.26,
+      "weighted": 66.07,
+      "xgboost": 66.08,
+      "catboost": 66.07,
+      "lightgbm": 66.07
+    },
+    {
+      "timestamp": "2017-06-01T01:45:00+00:00",
+      "actual": 66.3,
+      "weighted": 66.06,
+      "xgboost": 66.08,
+      "catboost": 66.04,
+      "lightgbm": 66.05
+    },
+    {
+      "timestamp": "2017-06-01T01:50:00+00:00",
+      "actual": 66.2,
+      "weighted": 66.0,
+      "xgboost": 66.02,
+      "catboost": 65.98,
+      "lightgbm": 66.0
+    },
+    {
+      "timestamp": "2017-06-01T01:55:00+00:00",
+      "actual": 66.32,
+      "weighted": 65.95,
+      "xgboost": 65.98,
+      "catboost": 65.93,
+      "lightgbm": 65.95
+    },
+    {
+      "timestamp": "2017-06-01T02:00:00+00:00",
+      "actual": 66.31,
+      "weighted": 65.93,
+      "xgboost": 65.96,
+      "catboost": 65.91,
+      "lightgbm": 65.92
+    },
+    {
+      "timestamp": "2017-06-01T02:05:00+00:00",
+      "actual": 66.08,
+      "weighted": 66.03,
+      "xgboost": 66.05,
+      "catboost": 66.03,
+      "lightgbm": 66.03
+    },
+    {
+      "timestamp": "2017-06-01T02:10:00+00:00",
+      "actual": 66.08,
+      "weighted": 66.03,
+      "xgboost": 66.04,
+      "catboost": 66.01,
+      "lightgbm": 66.03
+    },
+    {
+      "timestamp": "2017-06-01T02:15:00+00:00",
+      "actual": 66.2,
+      "weighted": 65.92,
+      "xgboost": 65.93,
+      "catboost": 65.9,
+      "lightgbm": 65.91
+    },
+    {
+      "timestamp": "2017-06-01T02:20:00+00:00",
+      "actual": 66.29,
+      "weighted": 66.06,
+      "xgboost": 66.09,
+      "catboost": 66.04,
+      "lightgbm": 66.06
+    },
+    {
+      "timestamp": "2017-06-01T02:25:00+00:00",
+      "actual": 66.3,
+      "weighted": 66.03,
+      "xgboost": 66.05,
+      "catboost": 66.02,
+      "lightgbm": 66.02
+    },
+    {
+      "timestamp": "2017-06-01T02:30:00+00:00",
+      "actual": 66.19,
+      "weighted": 65.92,
+      "xgboost": 65.93,
+      "catboost": 65.91,
+      "lightgbm": 65.91
+    },
+    {
+      "timestamp": "2017-06-01T02:35:00+00:00",
+      "actual": 66.36,
+      "weighted": 65.89,
+      "xgboost": 65.92,
+      "catboost": 65.86,
+      "lightgbm": 65.88
+    },
+    {
+      "timestamp": "2017-06-01T02:40:00+00:00",
+      "actual": 66.48,
+      "weighted": 65.98,
+      "xgboost": 65.99,
+      "catboost": 65.96,
+      "lightgbm": 65.98
+    },
+    {
+      "timestamp": "2017-06-01T02:45:00+00:00",
+      "actual": 66.44,
+      "weighted": 66.02,
+      "xgboost": 66.03,
+      "catboost": 66.01,
+      "lightgbm": 66.02
+    },
+    {
+      "timestamp": "2017-06-01T02:50:00+00:00",
+      "actual": 66.38,
+      "weighted": 66.02,
+      "xgboost": 66.04,
+      "catboost": 66.01,
+      "lightgbm": 66.01
+    },
+    {
+      "timestamp": "2017-06-01T02:55:00+00:00",
+      "actual": 66.23,
+      "weighted": 66.03,
+      "xgboost": 66.05,
+      "catboost": 66.02,
+      "lightgbm": 66.03
+    },
+    {
+      "timestamp": "2017-06-01T03:00:00+00:00",
+      "actual": 65.77,
+      "weighted": 65.98,
+      "xgboost": 66.0,
+      "catboost": 65.97,
+      "lightgbm": 65.97
+    },
+    {
+      "timestamp": "2017-06-01T03:05:00+00:00",
+      "actual": 66.12,
+      "weighted": 65.95,
+      "xgboost": 65.96,
+      "catboost": 65.95,
+      "lightgbm": 65.95
+    },
+    {
+      "timestamp": "2017-06-01T03:10:00+00:00",
+      "actual": 66.21,
+      "weighted": 65.89,
+      "xgboost": 65.91,
+      "catboost": 65.89,
+      "lightgbm": 65.88
+    },
+    {
+      "timestamp": "2017-06-01T03:15:00+00:00",
+      "actual": 66.25,
+      "weighted": 65.9,
+      "xgboost": 65.9,
+      "catboost": 65.9,
+      "lightgbm": 65.89
+    },
+    {
+      "timestamp": "2017-06-01T03:20:00+00:00",
+      "actual": 66.24,
+      "weighted": 65.95,
+      "xgboost": 65.96,
+      "catboost": 65.93,
+      "lightgbm": 65.95
+    },
+    {
+      "timestamp": "2017-06-01T03:25:00+00:00",
+      "actual": 66.38,
+      "weighted": 65.88,
+      "xgboost": 65.9,
+      "catboost": 65.87,
+      "lightgbm": 65.88
+    },
+    {
+      "timestamp": "2017-06-01T03:30:00+00:00",
+      "actual": 66.26,
+      "weighted": 65.87,
+      "xgboost": 65.88,
+      "catboost": 65.87,
+      "lightgbm": 65.86
+    },
+    {
+      "timestamp": "2017-06-01T03:35:00+00:00",
+      "actual": 66.23,
+      "weighted": 66.03,
+      "xgboost": 66.05,
+      "catboost": 66.03,
+      "lightgbm": 66.01
+    },
+    {
+      "timestamp": "2017-06-01T03:40:00+00:00",
+      "actual": 66.38,
+      "weighted": 66.05,
+      "xgboost": 66.07,
+      "catboost": 66.04,
+      "lightgbm": 66.04
+    },
+    {
+      "timestamp": "2017-06-01T03:45:00+00:00",
+      "actual": 66.22,
+      "weighted": 66.01,
+      "xgboost": 66.01,
+      "catboost": 66.03,
+      "lightgbm": 65.99
+    },
+    {
+      "timestamp": "2017-06-01T03:50:00+00:00",
+      "actual": 66.27,
+      "weighted": 66.08,
+      "xgboost": 66.09,
+      "catboost": 66.08,
+      "lightgbm": 66.07
+    },
+    {
+      "timestamp": "2017-06-01T03:55:00+00:00",
+      "actual": 66.3,
+      "weighted": 66.03,
+      "xgboost": 66.04,
+      "catboost": 66.03,
+      "lightgbm": 66.02
+    },
+    {
+      "timestamp": "2017-06-01T04:00:00+00:00",
+      "actual": 66.21,
+      "weighted": 65.97,
+      "xgboost": 65.98,
+      "catboost": 65.97,
+      "lightgbm": 65.96
+    },
+    {
+      "timestamp": "2017-06-01T04:05:00+00:00",
+      "actual": 66.32,
+      "weighted": 66.0,
+      "xgboost": 66.0,
+      "catboost": 66.02,
+      "lightgbm": 65.98
+    },
+    {
+      "timestamp": "2017-06-01T04:10:00+00:00",
+      "actual": 66.26,
+      "weighted": 66.02,
+      "xgboost": 66.03,
+      "catboost": 66.02,
+      "lightgbm": 66.0
+    },
+    {
+      "timestamp": "2017-06-01T04:15:00+00:00",
+      "actual": 66.52,
+      "weighted": 66.03,
+      "xgboost": 66.04,
+      "catboost": 66.03,
+      "lightgbm": 66.03
+    },
+    {
+      "timestamp": "2017-06-01T04:20:00+00:00",
+      "actual": 66.6,
+      "weighted": 66.14,
+      "xgboost": 66.13,
+      "catboost": 66.16,
+      "lightgbm": 66.13
+    },
+    {
+      "timestamp": "2017-06-01T04:25:00+00:00",
+      "actual": 66.57,
+      "weighted": 66.16,
+      "xgboost": 66.16,
+      "catboost": 66.18,
+      "lightgbm": 66.15
+    },
+    {
+      "timestamp": "2017-06-01T04:30:00+00:00",
+      "actual": 66.55,
+      "weighted": 66.26,
+      "xgboost": 66.26,
+      "catboost": 66.27,
+      "lightgbm": 66.26
+    },
+    {
+      "timestamp": "2017-06-01T04:35:00+00:00",
+      "actual": 66.58,
+      "weighted": 66.47,
+      "xgboost": 66.47,
+      "catboost": 66.47,
+      "lightgbm": 66.47
+    },
+    {
+      "timestamp": "2017-06-01T04:40:00+00:00",
+      "actual": 66.66,
+      "weighted": 66.49,
+      "xgboost": 66.48,
+      "catboost": 66.49,
+      "lightgbm": 66.49
+    },
+    {
+      "timestamp": "2017-06-01T04:45:00+00:00",
+      "actual": 66.93,
+      "weighted": 66.49,
+      "xgboost": 66.49,
+      "catboost": 66.5,
+      "lightgbm": 66.48
+    },
+    {
+      "timestamp": "2017-06-01T04:50:00+00:00",
+      "actual": 67.07,
+      "weighted": 66.65,
+      "xgboost": 66.63,
+      "catboost": 66.67,
+      "lightgbm": 66.65
+    },
+    {
+      "timestamp": "2017-06-01T04:55:00+00:00",
+      "actual": 67.09,
+      "weighted": 66.73,
+      "xgboost": 66.71,
+      "catboost": 66.74,
+      "lightgbm": 66.73
+    },
+    {
+      "timestamp": "2017-06-01T05:00:00+00:00",
+      "actual": 67.52,
+      "weighted": 66.97,
+      "xgboost": 66.97,
+      "catboost": 66.98,
+      "lightgbm": 66.97
+    },
+    {
+      "timestamp": "2017-06-01T05:05:00+00:00",
+      "actual": 67.57,
+      "weighted": 67.01,
+      "xgboost": 67.01,
+      "catboost": 67.02,
+      "lightgbm": 67.0
+    },
+    {
+      "timestamp": "2017-06-01T05:10:00+00:00",
+      "actual": 67.57,
+      "weighted": 67.03,
+      "xgboost": 67.04,
+      "catboost": 67.05,
+      "lightgbm": 67.02
+    },
+    {
+      "timestamp": "2017-06-01T05:15:00+00:00",
+      "actual": 67.62,
+      "weighted": 67.02,
+      "xgboost": 67.02,
+      "catboost": 67.03,
+      "lightgbm": 67.0
+    },
+    {
+      "timestamp": "2017-06-01T05:20:00+00:00",
+      "actual": 67.47,
+      "weighted": 66.96,
+      "xgboost": 66.96,
+      "catboost": 66.96,
+      "lightgbm": 66.95
+    },
+    {
+      "timestamp": "2017-06-01T05:25:00+00:00",
+      "actual": 67.35,
+      "weighted": 66.87,
+      "xgboost": 66.87,
+      "catboost": 66.88,
+      "lightgbm": 66.88
+    },
+    {
+      "timestamp": "2017-06-01T05:30:00+00:00",
+      "actual": 67.29,
+      "weighted": 66.7,
+      "xgboost": 66.68,
+      "catboost": 66.7,
+      "lightgbm": 66.7
+    },
+    {
+      "timestamp": "2017-06-01T05:35:00+00:00",
+      "actual": 66.89,
+      "weighted": 66.5,
+      "xgboost": 66.49,
+      "catboost": 66.51,
+      "lightgbm": 66.51
+    },
+    {
+      "timestamp": "2017-06-01T05:40:00+00:00",
+      "actual": 66.71,
+      "weighted": 66.41,
+      "xgboost": 66.39,
+      "catboost": 66.42,
+      "lightgbm": 66.42
+    },
+    {
+      "timestamp": "2017-06-01T05:45:00+00:00",
+      "actual": 66.44,
+      "weighted": 66.3,
+      "xgboost": 66.28,
+      "catboost": 66.3,
+      "lightgbm": 66.33
+    },
+    {
+      "timestamp": "2017-06-01T05:50:00+00:00",
+      "actual": 66.56,
+      "weighted": 66.18,
+      "xgboost": 66.17,
+      "catboost": 66.18,
+      "lightgbm": 66.21
+    },
+    {
+      "timestamp": "2017-06-01T05:55:00+00:00",
+      "actual": 66.67,
+      "weighted": 66.22,
+      "xgboost": 66.2,
+      "catboost": 66.24,
+      "lightgbm": 66.23
+    },
+    {
+      "timestamp": "2017-06-01T06:00:00+00:00",
+      "actual": 65.65,
+      "weighted": 65.33,
+      "xgboost": 65.34,
+      "catboost": 65.31,
+      "lightgbm": 65.35
+    },
+    {
+      "timestamp": "2017-06-01T06:05:00+00:00",
+      "actual": 64.96,
+      "weighted": 64.5,
+      "xgboost": 64.51,
+      "catboost": 64.48,
+      "lightgbm": 64.51
+    },
+    {
+      "timestamp": "2017-06-01T06:10:00+00:00",
+      "actual": 64.23,
+      "weighted": 63.88,
+      "xgboost": 63.9,
+      "catboost": 63.85,
+      "lightgbm": 63.9
+    },
+    {
+      "timestamp": "2017-06-01T06:15:00+00:00",
+      "actual": 63.87,
+      "weighted": 63.24,
+      "xgboost": 63.26,
+      "catboost": 63.21,
+      "lightgbm": 63.25
+    },
+    {
+      "timestamp": "2017-06-01T06:20:00+00:00",
+      "actual": 63.05,
+      "weighted": 62.68,
+      "xgboost": 62.71,
+      "catboost": 62.67,
+      "lightgbm": 62.68
+    },
+    {
+      "timestamp": "2017-06-01T06:25:00+00:00",
+      "actual": 62.28,
+      "weighted": 61.87,
+      "xgboost": 61.9,
+      "catboost": 61.86,
+      "lightgbm": 61.84
+    },
+    {
+      "timestamp": "2017-06-01T06:30:00+00:00",
+      "actual": 61.71,
+      "weighted": 61.33,
+      "xgboost": 61.33,
+      "catboost": 61.35,
+      "lightgbm": 61.3
+    },
+    {
+      "timestamp": "2017-06-01T06:35:00+00:00",
+      "actual": 61.12,
+      "weighted": 60.9,
+      "xgboost": 60.93,
+      "catboost": 60.89,
+      "lightgbm": 60.88
+    },
+    {
+      "timestamp": "2017-06-01T06:40:00+00:00",
+      "actual": 60.45,
+      "weighted": 60.17,
+      "xgboost": 60.2,
+      "catboost": 60.19,
+      "lightgbm": 60.13
+    },
+    {
+      "timestamp": "2017-06-01T06:45:00+00:00",
+      "actual": 59.93,
+      "weighted": 59.59,
+      "xgboost": 59.6,
+      "catboost": 59.61,
+      "lightgbm": 59.55
+    },
+    {
+      "timestamp": "2017-06-01T06:50:00+00:00",
+      "actual": 59.27,
+      "weighted": 59.09,
+      "xgboost": 59.1,
+      "catboost": 59.12,
+      "lightgbm": 59.05
+    },
+    {
+      "timestamp": "2017-06-01T06:55:00+00:00",
+      "actual": 58.78,
+      "weighted": 58.57,
+      "xgboost": 58.61,
+      "catboost": 58.58,
+      "lightgbm": 58.54
+    },
+    {
+      "timestamp": "2017-06-01T07:00:00+00:00",
+      "actual": 57.94,
+      "weighted": 58.05,
+      "xgboost": 58.13,
+      "catboost": 58.02,
+      "lightgbm": 57.99
+    },
+    {
+      "timestamp": "2017-06-01T07:05:00+00:00",
+      "actual": 57.36,
+      "weighted": 57.35,
+      "xgboost": 57.44,
+      "catboost": 57.33,
+      "lightgbm": 57.31
+    },
+    {
+      "timestamp": "2017-06-01T07:10:00+00:00",
+      "actual": 56.51,
+      "weighted": 56.84,
+      "xgboost": 56.92,
+      "catboost": 56.83,
+      "lightgbm": 56.78
+    },
+    {
+      "timestamp": "2017-06-01T07:15:00+00:00",
+      "actual": 56.02,
+      "weighted": 56.17,
+      "xgboost": 56.24,
+      "catboost": 56.17,
+      "lightgbm": 56.11
+    },
+    {
+      "timestamp": "2017-06-01T07:20:00+00:00",
+      "actual": 55.26,
+      "weighted": 55.57,
+      "xgboost": 55.64,
+      "catboost": 55.55,
+      "lightgbm": 55.52
+    },
+    {
+      "timestamp": "2017-06-01T07:25:00+00:00",
+      "actual": 54.65,
+      "weighted": 54.76,
+      "xgboost": 54.87,
+      "catboost": 54.71,
+      "lightgbm": 54.72
+    },
+    {
+      "timestamp": "2017-06-01T07:30:00+00:00",
+      "actual": 53.92,
+      "weighted": 53.92,
+      "xgboost": 54.07,
+      "catboost": 53.85,
+      "lightgbm": 53.87
+    },
+    {
+      "timestamp": "2017-06-01T07:35:00+00:00",
+      "actual": 53.26,
+      "weighted": 53.17,
+      "xgboost": 53.26,
+      "catboost": 53.14,
+      "lightgbm": 53.11
+    },
+    {
+      "timestamp": "2017-06-01T07:40:00+00:00",
+      "actual": 52.72,
+      "weighted": 52.59,
+      "xgboost": 52.68,
+      "catboost": 52.56,
+      "lightgbm": 52.54
+    },
+    {
+      "timestamp": "2017-06-01T07:45:00+00:00",
+      "actual": 52.31,
+      "weighted": 52.22,
+      "xgboost": 52.33,
+      "catboost": 52.18,
+      "lightgbm": 52.17
+    },
+    {
+      "timestamp": "2017-06-01T07:50:00+00:00",
+      "actual": 52.12,
+      "weighted": 51.89,
+      "xgboost": 51.95,
+      "catboost": 51.86,
+      "lightgbm": 51.87
+    },
+    {
+      "timestamp": "2017-06-01T07:55:00+00:00",
+      "actual": 51.91,
+      "weighted": 51.77,
+      "xgboost": 51.84,
+      "catboost": 51.76,
+      "lightgbm": 51.73
+    },
+    {
+      "timestamp": "2017-06-01T08:00:00+00:00",
+      "actual": 52.0,
+      "weighted": 51.54,
+      "xgboost": 51.63,
+      "catboost": 51.54,
+      "lightgbm": 51.47
+    },
+    {
+      "timestamp": "2017-06-01T08:05:00+00:00",
+      "actual": 52.12,
+      "weighted": 51.35,
+      "xgboost": 51.43,
+      "catboost": 51.34,
+      "lightgbm": 51.29
+    },
+    {
+      "timestamp": "2017-06-01T08:10:00+00:00",
+      "actual": 52.1,
+      "weighted": 51.33,
+      "xgboost": 51.39,
+      "catboost": 51.35,
+      "lightgbm": 51.26
+    },
+    {
+      "timestamp": "2017-06-01T08:15:00+00:00",
+      "actual": 51.92,
+      "weighted": 51.35,
+      "xgboost": 51.46,
+      "catboost": 51.34,
+      "lightgbm": 51.27
+    },
+    {
+      "timestamp": "2017-06-01T08:20:00+00:00",
+      "actual": 51.76,
+      "weighted": 51.42,
+      "xgboost": 51.46,
+      "catboost": 51.43,
+      "lightgbm": 51.38
+    },
+    {
+      "timestamp": "2017-06-01T08:25:00+00:00",
+      "actual": 51.31,
+      "weighted": 51.46,
+      "xgboost": 51.57,
+      "catboost": 51.43,
+      "lightgbm": 51.4
+    },
+    {
+      "timestamp": "2017-06-01T08:30:00+00:00",
+      "actual": 51.15,
+      "weighted": 51.33,
+      "xgboost": 51.46,
+      "catboost": 51.27,
+      "lightgbm": 51.28
+    },
+    {
+      "timestamp": "2017-06-01T08:35:00+00:00",
+      "actual": 50.99,
+      "weighted": 51.33,
+      "xgboost": 51.51,
+      "catboost": 51.24,
+      "lightgbm": 51.27
+    },
+    {
+      "timestamp": "2017-06-01T08:40:00+00:00",
+      "actual": 51.36,
+      "weighted": 51.22,
+      "xgboost": 51.43,
+      "catboost": 51.09,
+      "lightgbm": 51.18
+    },
+    {
+      "timestamp": "2017-06-01T08:45:00+00:00",
+      "actual": 51.31,
+      "weighted": 51.15,
+      "xgboost": 51.32,
+      "catboost": 51.0,
+      "lightgbm": 51.15
+    },
+    {
+      "timestamp": "2017-06-01T08:50:00+00:00",
+      "actual": 51.77,
+      "weighted": 51.07,
+      "xgboost": 51.3,
+      "catboost": 50.85,
+      "lightgbm": 51.07
+    },
+    {
+      "timestamp": "2017-06-01T08:55:00+00:00",
+      "actual": 52.29,
+      "weighted": 51.33,
+      "xgboost": 51.52,
+      "catboost": 51.11,
+      "lightgbm": 51.37
+    },
+    {
+      "timestamp": "2017-06-01T09:00:00+00:00",
+      "actual": 53.4,
+      "weighted": 51.72,
+      "xgboost": 51.86,
+      "catboost": 51.57,
+      "lightgbm": 51.72
+    },
+    {
+      "timestamp": "2017-06-01T09:05:00+00:00",
+      "actual": 54.26,
+      "weighted": 51.92,
+      "xgboost": 52.04,
+      "catboost": 51.82,
+      "lightgbm": 51.91
+    },
+    {
+      "timestamp": "2017-06-01T09:10:00+00:00",
+      "actual": 55.09,
+      "weighted": 52.19,
+      "xgboost": 52.26,
+      "catboost": 52.13,
+      "lightgbm": 52.2
+    },
+    {
+      "timestamp": "2017-06-01T09:15:00+00:00",
+      "actual": 55.48,
+      "weighted": 52.61,
+      "xgboost": 52.63,
+      "catboost": 52.59,
+      "lightgbm": 52.6
+    },
+    {
+      "timestamp": "2017-06-01T09:20:00+00:00",
+      "actual": 55.83,
+      "weighted": 53.11,
+      "xgboost": 53.19,
+      "catboost": 53.06,
+      "lightgbm": 53.1
+    },
+    {
+      "timestamp": "2017-06-01T09:25:00+00:00",
+      "actual": 56.01,
+      "weighted": 53.59,
+      "xgboost": 53.64,
+      "catboost": 53.56,
+      "lightgbm": 53.57
+    },
+    {
+      "timestamp": "2017-06-01T09:30:00+00:00",
+      "actual": 56.07,
+      "weighted": 53.91,
+      "xgboost": 53.94,
+      "catboost": 53.92,
+      "lightgbm": 53.87
+    },
+    {
+      "timestamp": "2017-06-01T09:35:00+00:00",
+      "actual": 56.21,
+      "weighted": 54.28,
+      "xgboost": 54.28,
+      "catboost": 54.3,
+      "lightgbm": 54.25
+    },
+    {
+      "timestamp": "2017-06-01T09:40:00+00:00",
+      "actual": 56.25,
+      "weighted": 54.56,
+      "xgboost": 54.56,
+      "catboost": 54.58,
+      "lightgbm": 54.54
+    },
+    {
+      "timestamp": "2017-06-01T09:45:00+00:00",
+      "actual": 56.31,
+      "weighted": 54.88,
+      "xgboost": 54.9,
+      "catboost": 54.89,
+      "lightgbm": 54.85
+    },
+    {
+      "timestamp": "2017-06-01T09:50:00+00:00",
+      "actual": 56.36,
+      "weighted": 55.12,
+      "xgboost": 55.12,
+      "catboost": 55.19,
+      "lightgbm": 55.06
+    },
+    {
+      "timestamp": "2017-06-01T09:55:00+00:00",
+      "actual": 56.66,
+      "weighted": 55.54,
+      "xgboost": 55.52,
+      "catboost": 55.6,
+      "lightgbm": 55.52
+    },
+    {
+      "timestamp": "2017-06-01T10:00:00+00:00",
+      "actual": 57.13,
+      "weighted": 56.06,
+      "xgboost": 56.03,
+      "catboost": 56.09,
+      "lightgbm": 56.04
+    },
+    {
+      "timestamp": "2017-06-01T10:05:00+00:00",
+      "actual": 57.44,
+      "weighted": 56.71,
+      "xgboost": 56.71,
+      "catboost": 56.71,
+      "lightgbm": 56.71
+    },
+    {
+      "timestamp": "2017-06-01T10:10:00+00:00",
+      "actual": 58.12,
+      "weighted": 57.22,
+      "xgboost": 57.2,
+      "catboost": 57.25,
+      "lightgbm": 57.22
+    },
+    {
+      "timestamp": "2017-06-01T10:15:00+00:00",
+      "actual": 58.78,
+      "weighted": 57.86,
+      "xgboost": 57.86,
+      "catboost": 57.86,
+      "lightgbm": 57.85
+    },
+    {
+      "timestamp": "2017-06-01T10:20:00+00:00",
+      "actual": 59.35,
+      "weighted": 58.41,
+      "xgboost": 58.46,
+      "catboost": 58.36,
+      "lightgbm": 58.42
+    },
+    {
+      "timestamp": "2017-06-01T10:25:00+00:00",
+      "actual": 59.7,
+      "weighted": 58.82,
+      "xgboost": 58.9,
+      "catboost": 58.72,
+      "lightgbm": 58.84
+    },
+    {
+      "timestamp": "2017-06-01T10:30:00+00:00",
+      "actual": 60.1,
+      "weighted": 59.28,
+      "xgboost": 59.34,
+      "catboost": 59.2,
+      "lightgbm": 59.31
+    },
+    {
+      "timestamp": "2017-06-01T10:35:00+00:00",
+      "actual": 60.31,
+      "weighted": 59.6,
+      "xgboost": 59.66,
+      "catboost": 59.51,
+      "lightgbm": 59.64
+    },
+    {
+      "timestamp": "2017-06-01T10:40:00+00:00",
+      "actual": 60.66,
+      "weighted": 59.86,
+      "xgboost": 59.93,
+      "catboost": 59.75,
+      "lightgbm": 59.92
+    },
+    {
+      "timestamp": "2017-06-01T10:45:00+00:00",
+      "actual": 60.86,
+      "weighted": 60.26,
+      "xgboost": 60.34,
+      "catboost": 60.13,
+      "lightgbm": 60.32
+    },
+    {
+      "timestamp": "2017-06-01T10:50:00+00:00",
+      "actual": 61.22,
+      "weighted": 60.58,
+      "xgboost": 60.63,
+      "catboost": 60.46,
+      "lightgbm": 60.63
+    },
+    {
+      "timestamp": "2017-06-01T10:55:00+00:00",
+      "actual": 61.45,
+      "weighted": 60.64,
+      "xgboost": 60.67,
+      "catboost": 60.55,
+      "lightgbm": 60.7
+    },
+    {
+      "timestamp": "2017-06-01T11:00:00+00:00",
+      "actual": 61.69,
+      "weighted": 60.83,
+      "xgboost": 60.87,
+      "catboost": 60.75,
+      "lightgbm": 60.87
+    },
+    {
+      "timestamp": "2017-06-01T11:05:00+00:00",
+      "actual": 62.18,
+      "weighted": 61.2,
+      "xgboost": 61.2,
+      "catboost": 61.17,
+      "lightgbm": 61.21
+    },
+    {
+      "timestamp": "2017-06-01T11:10:00+00:00",
+      "actual": 62.56,
+      "weighted": 61.61,
+      "xgboost": 61.62,
+      "catboost": 61.56,
+      "lightgbm": 61.64
+    },
+    {
+      "timestamp": "2017-06-01T11:15:00+00:00",
+      "actual": 62.83,
+      "weighted": 61.73,
+      "xgboost": 61.78,
+      "catboost": 61.65,
+      "lightgbm": 61.77
+    },
+    {
+      "timestamp": "2017-06-01T11:20:00+00:00",
+      "actual": 62.89,
+      "weighted": 61.81,
+      "xgboost": 61.86,
+      "catboost": 61.73,
+      "lightgbm": 61.84
+    },
+    {
+      "timestamp": "2017-06-01T11:25:00+00:00",
+      "actual": 62.72,
+      "weighted": 61.9,
+      "xgboost": 61.92,
+      "catboost": 61.84,
+      "lightgbm": 61.92
+    },
+    {
+      "timestamp": "2017-06-01T11:30:00+00:00",
+      "actual": 62.64,
+      "weighted": 61.94,
+      "xgboost": 61.96,
+      "catboost": 61.88,
+      "lightgbm": 61.97
+    },
+    {
+      "timestamp": "2017-06-01T11:35:00+00:00",
+      "actual": 62.49,
+      "weighted": 61.9,
+      "xgboost": 61.94,
+      "catboost": 61.83,
+      "lightgbm": 61.94
+    },
+    {
+      "timestamp": "2017-06-01T11:40:00+00:00",
+      "actual": 62.41,
+      "weighted": 61.93,
+      "xgboost": 61.97,
+      "catboost": 61.85,
+      "lightgbm": 61.97
+    },
+    {
+      "timestamp": "2017-06-01T11:45:00+00:00",
+      "actual": 62.43,
+      "weighted": 61.96,
+      "xgboost": 61.98,
+      "catboost": 61.92,
+      "lightgbm": 61.97
+    },
+    {
+      "timestamp": "2017-06-01T11:50:00+00:00",
+      "actual": 62.22,
+      "weighted": 62.06,
+      "xgboost": 62.09,
+      "catboost": 62.02,
+      "lightgbm": 62.08
+    },
+    {
+      "timestamp": "2017-06-01T11:55:00+00:00",
+      "actual": 62.01,
+      "weighted": 62.23,
+      "xgboost": 62.25,
+      "catboost": 62.19,
+      "lightgbm": 62.26
+    },
+    {
+      "timestamp": "2017-06-01T12:00:00+00:00",
+      "actual": 61.66,
+      "weighted": 62.31,
+      "xgboost": 62.35,
+      "catboost": 62.24,
+      "lightgbm": 62.35
+    },
+    {
+      "timestamp": "2017-06-01T12:05:00+00:00",
+      "actual": 61.54,
+      "weighted": 62.31,
+      "xgboost": 62.35,
+      "catboost": 62.24,
+      "lightgbm": 62.34
+    },
+    {
+      "timestamp": "2017-06-01T12:10:00+00:00",
+      "actual": 61.62,
+      "weighted": 62.37,
+      "xgboost": 62.41,
+      "catboost": 62.32,
+      "lightgbm": 62.4
+    },
+    {
+      "timestamp": "2017-06-01T12:15:00+00:00",
+      "actual": 61.68,
+      "weighted": 62.2,
+      "xgboost": 62.25,
+      "catboost": 62.14,
+      "lightgbm": 62.22
+    },
+    {
+      "timestamp": "2017-06-01T12:20:00+00:00",
+      "actual": 61.79,
+      "weighted": 61.98,
+      "xgboost": 62.05,
+      "catboost": 61.88,
+      "lightgbm": 62.01
+    },
+    {
+      "timestamp": "2017-06-01T12:25:00+00:00",
+      "actual": 61.91,
+      "weighted": 61.92,
+      "xgboost": 61.98,
+      "catboost": 61.83,
+      "lightgbm": 61.95
+    },
+    {
+      "timestamp": "2017-06-01T12:30:00+00:00",
+      "actual": 61.98,
+      "weighted": 61.83,
+      "xgboost": 61.89,
+      "catboost": 61.74,
+      "lightgbm": 61.86
+    },
+    {
+      "timestamp": "2017-06-01T12:35:00+00:00",
+      "actual": 61.99,
+      "weighted": 61.81,
+      "xgboost": 61.88,
+      "catboost": 61.72,
+      "lightgbm": 61.84
+    },
+    {
+      "timestamp": "2017-06-01T12:40:00+00:00",
+      "actual": 62.17,
+      "weighted": 61.88,
+      "xgboost": 61.93,
+      "catboost": 61.82,
+      "lightgbm": 61.89
+    },
+    {
+      "timestamp": "2017-06-01T12:45:00+00:00",
+      "actual": 62.5,
+      "weighted": 61.89,
+      "xgboost": 61.94,
+      "catboost": 61.82,
+      "lightgbm": 61.9
+    },
+    {
+      "timestamp": "2017-06-01T12:50:00+00:00",
+      "actual": 62.46,
+      "weighted": 61.91,
+      "xgboost": 61.96,
+      "catboost": 61.84,
+      "lightgbm": 61.92
+    },
+    {
+      "timestamp": "2017-06-01T12:55:00+00:00",
+      "actual": 62.32,
+      "weighted": 61.93,
+      "xgboost": 61.97,
+      "catboost": 61.88,
+      "lightgbm": 61.94
+    },
+    {
+      "timestamp": "2017-06-01T13:00:00+00:00",
+      "actual": 62.2,
+      "weighted": 61.82,
+      "xgboost": 61.87,
+      "catboost": 61.77,
+      "lightgbm": 61.83
+    },
+    {
+      "timestamp": "2017-06-01T13:05:00+00:00",
+      "actual": 62.13,
+      "weighted": 61.88,
+      "xgboost": 61.93,
+      "catboost": 61.82,
+      "lightgbm": 61.88
+    },
+    {
+      "timestamp": "2017-06-01T13:10:00+00:00",
+      "actual": 62.07,
+      "weighted": 61.77,
+      "xgboost": 61.87,
+      "catboost": 61.69,
+      "lightgbm": 61.77
+    },
+    {
+      "timestamp": "2017-06-01T13:15:00+00:00",
+      "actual": 61.91,
+      "weighted": 61.52,
+      "xgboost": 61.6,
+      "catboost": 61.42,
+      "lightgbm": 61.54
+    },
+    {
+      "timestamp": "2017-06-01T13:20:00+00:00",
+      "actual": 61.97,
+      "weighted": 61.4,
+      "xgboost": 61.45,
+      "catboost": 61.33,
+      "lightgbm": 61.42
+    },
+    {
+      "timestamp": "2017-06-01T13:25:00+00:00",
+      "actual": 62.21,
+      "weighted": 61.29,
+      "xgboost": 61.34,
+      "catboost": 61.21,
+      "lightgbm": 61.32
+    },
+    {
+      "timestamp": "2017-06-01T13:30:00+00:00",
+      "actual": 62.37,
+      "weighted": 61.34,
+      "xgboost": 61.39,
+      "catboost": 61.26,
+      "lightgbm": 61.37
+    },
+    {
+      "timestamp": "2017-06-01T13:35:00+00:00",
+      "actual": 62.22,
+      "weighted": 61.27,
+      "xgboost": 61.35,
+      "catboost": 61.18,
+      "lightgbm": 61.29
+    },
+    {
+      "timestamp": "2017-06-01T13:40:00+00:00",
+      "actual": 61.96,
+      "weighted": 61.13,
+      "xgboost": 61.2,
+      "catboost": 61.05,
+      "lightgbm": 61.16
+    },
+    {
+      "timestamp": "2017-06-01T13:45:00+00:00",
+      "actual": 61.7,
+      "weighted": 60.96,
+      "xgboost": 61.02,
+      "catboost": 60.88,
+      "lightgbm": 61.0
+    },
+    {
+      "timestamp": "2017-06-01T13:50:00+00:00",
+      "actual": 61.55,
+      "weighted": 60.84,
+      "xgboost": 60.89,
+      "catboost": 60.77,
+      "lightgbm": 60.87
+    },
+    {
+      "timestamp": "2017-06-01T13:55:00+00:00",
+      "actual": 61.49,
+      "weighted": 60.71,
+      "xgboost": 60.77,
+      "catboost": 60.63,
+      "lightgbm": 60.74
+    },
+    {
+      "timestamp": "2017-06-01T14:00:00+00:00",
+      "actual": 61.44,
+      "weighted": 60.6,
+      "xgboost": 60.65,
+      "catboost": 60.51,
+      "lightgbm": 60.63
+    },
+    {
+      "timestamp": "2017-06-01T14:05:00+00:00",
+      "actual": 61.63,
+      "weighted": 60.4,
+      "xgboost": 60.46,
+      "catboost": 60.27,
+      "lightgbm": 60.45
+    },
+    {
+      "timestamp": "2017-06-01T14:10:00+00:00",
+      "actual": 61.64,
+      "weighted": 60.01,
+      "xgboost": 60.05,
+      "catboost": 59.92,
+      "lightgbm": 60.06
+    },
+    {
+      "timestamp": "2017-06-01T14:15:00+00:00",
+      "actual": 61.34,
+      "weighted": 59.57,
+      "xgboost": 59.57,
+      "catboost": 59.54,
+      "lightgbm": 59.6
+    },
+    {
+      "timestamp": "2017-06-01T14:20:00+00:00",
+      "actual": 61.03,
+      "weighted": 59.0,
+      "xgboost": 58.96,
+      "catboost": 59.01,
+      "lightgbm": 59.03
+    },
+    {
+      "timestamp": "2017-06-01T14:25:00+00:00",
+      "actual": 60.66,
+      "weighted": 58.54,
+      "xgboost": 58.54,
+      "catboost": 58.54,
+      "lightgbm": 58.55
+    },
+    {
+      "timestamp": "2017-06-01T14:30:00+00:00",
+      "actual": 60.41,
+      "weighted": 58.21,
+      "xgboost": 58.2,
+      "catboost": 58.21,
+      "lightgbm": 58.22
+    },
+    {
+      "timestamp": "2017-06-01T14:35:00+00:00",
+      "actual": 59.8,
+      "weighted": 58.04,
+      "xgboost": 58.05,
+      "catboost": 58.0,
+      "lightgbm": 58.06
+    },
+    {
+      "timestamp": "2017-06-01T14:40:00+00:00",
+      "actual": 58.97,
+      "weighted": 57.57,
+      "xgboost": 57.62,
+      "catboost": 57.5,
+      "lightgbm": 57.59
+    },
+    {
+      "timestamp": "2017-06-01T14:45:00+00:00",
+      "actual": 57.81,
+      "weighted": 56.8,
+      "xgboost": 56.84,
+      "catboost": 56.76,
+      "lightgbm": 56.81
+    },
+    {
+      "timestamp": "2017-06-01T14:50:00+00:00",
+      "actual": 57.25,
+      "weighted": 56.15,
+      "xgboost": 56.19,
+      "catboost": 56.09,
+      "lightgbm": 56.18
+    },
+    {
+      "timestamp": "2017-06-01T14:55:00+00:00",
+      "actual": 56.82,
+      "weighted": 56.0,
+      "xgboost": 56.04,
+      "catboost": 55.94,
+      "lightgbm": 56.02
+    },
+    {
+      "timestamp": "2017-06-01T15:00:00+00:00",
+      "actual": 56.36,
+      "weighted": 55.76,
+      "xgboost": 55.8,
+      "catboost": 55.72,
+      "lightgbm": 55.75
+    },
+    {
+      "timestamp": "2017-06-01T15:05:00+00:00",
+      "actual": 56.35,
+      "weighted": 55.69,
+      "xgboost": 55.73,
+      "catboost": 55.65,
+      "lightgbm": 55.7
+    },
+    {
+      "timestamp": "2017-06-01T15:10:00+00:00",
+      "actual": 56.31,
+      "weighted": 55.49,
+      "xgboost": 55.58,
+      "catboost": 55.39,
+      "lightgbm": 55.51
+    },
+    {
+      "timestamp": "2017-06-01T15:15:00+00:00",
+      "actual": 55.96,
+      "weighted": 55.15,
+      "xgboost": 55.22,
+      "catboost": 55.05,
+      "lightgbm": 55.18
+    },
+    {
+      "timestamp": "2017-06-01T15:20:00+00:00",
+      "actual": 55.56,
+      "weighted": 55.01,
+      "xgboost": 55.1,
+      "catboost": 54.89,
+      "lightgbm": 55.04
+    },
+    {
+      "timestamp": "2017-06-01T15:25:00+00:00",
+      "actual": 55.36,
+      "weighted": 54.96,
+      "xgboost": 55.05,
+      "catboost": 54.84,
+      "lightgbm": 55.0
+    },
+    {
+      "timestamp": "2017-06-01T15:30:00+00:00",
+      "actual": 55.03,
+      "weighted": 54.97,
+      "xgboost": 55.02,
+      "catboost": 54.89,
+      "lightgbm": 54.99
+    },
+    {
+      "timestamp": "2017-06-01T15:35:00+00:00",
+      "actual": 54.8,
+      "weighted": 54.83,
+      "xgboost": 54.86,
+      "catboost": 54.78,
+      "lightgbm": 54.87
+    },
+    {
+      "timestamp": "2017-06-01T15:40:00+00:00",
+      "actual": 54.52,
+      "weighted": 54.58,
+      "xgboost": 54.61,
+      "catboost": 54.49,
+      "lightgbm": 54.65
+    },
+    {
+      "timestamp": "2017-06-01T15:45:00+00:00",
+      "actual": 54.4,
+      "weighted": 54.52,
+      "xgboost": 54.61,
+      "catboost": 54.4,
+      "lightgbm": 54.55
+    },
+    {
+      "timestamp": "2017-06-01T15:50:00+00:00",
+      "actual": 54.02,
+      "weighted": 54.29,
+      "xgboost": 54.4,
+      "catboost": 54.12,
+      "lightgbm": 54.34
+    },
+    {
+      "timestamp": "2017-06-01T15:55:00+00:00",
+      "actual": 53.77,
+      "weighted": 54.14,
+      "xgboost": 54.26,
+      "catboost": 53.99,
+      "lightgbm": 54.17
+    },
+    {
+      "timestamp": "2017-06-01T16:00:00+00:00",
+      "actual": 53.8,
+      "weighted": 54.22,
+      "xgboost": 54.35,
+      "catboost": 54.05,
+      "lightgbm": 54.25
+    },
+    {
+      "timestamp": "2017-06-01T16:05:00+00:00",
+      "actual": 53.51,
+      "weighted": 54.35,
+      "xgboost": 54.45,
+      "catboost": 54.24,
+      "lightgbm": 54.36
+    },
+    {
+      "timestamp": "2017-06-01T16:10:00+00:00",
+      "actual": 53.12,
+      "weighted": 54.28,
+      "xgboost": 54.37,
+      "catboost": 54.18,
+      "lightgbm": 54.29
+    },
+    {
+      "timestamp": "2017-06-01T16:15:00+00:00",
+      "actual": 52.68,
+      "weighted": 53.96,
+      "xgboost": 54.07,
+      "catboost": 53.84,
+      "lightgbm": 53.98
+    },
+    {
+      "timestamp": "2017-06-01T16:20:00+00:00",
+      "actual": 52.18,
+      "weighted": 53.68,
+      "xgboost": 53.81,
+      "catboost": 53.51,
+      "lightgbm": 53.73
+    },
+    {
+      "timestamp": "2017-06-01T16:25:00+00:00",
+      "actual": 52.0,
+      "weighted": 53.52,
+      "xgboost": 53.67,
+      "catboost": 53.32,
+      "lightgbm": 53.59
+    },
+    {
+      "timestamp": "2017-06-01T16:30:00+00:00",
+      "actual": 52.18,
+      "weighted": 53.34,
+      "xgboost": 53.43,
+      "catboost": 53.17,
+      "lightgbm": 53.41
+    },
+    {
+      "timestamp": "2017-06-01T16:35:00+00:00",
+      "actual": 52.18,
+      "weighted": 53.17,
+      "xgboost": 53.3,
+      "catboost": 52.98,
+      "lightgbm": 53.24
+    },
+    {
+      "timestamp": "2017-06-01T16:40:00+00:00",
+      "actual": 51.85,
+      "weighted": 52.94,
+      "xgboost": 53.1,
+      "catboost": 52.7,
+      "lightgbm": 53.02
+    },
+    {
+      "timestamp": "2017-06-01T16:45:00+00:00",
+      "actual": 51.31,
+      "weighted": 52.55,
+      "xgboost": 52.72,
+      "catboost": 52.28,
+      "lightgbm": 52.64
+    },
+    {
+      "timestamp": "2017-06-01T16:50:00+00:00",
+      "actual": 50.85,
+      "weighted": 52.31,
+      "xgboost": 52.45,
+      "catboost": 52.05,
+      "lightgbm": 52.44
+    },
+    {
+      "timestamp": "2017-06-01T16:55:00+00:00",
+      "actual": 50.64,
+      "weighted": 52.25,
+      "xgboost": 52.43,
+      "catboost": 51.93,
+      "lightgbm": 52.38
+    },
+    {
+      "timestamp": "2017-06-01T17:00:00+00:00",
+      "actual": 50.41,
+      "weighted": 52.24,
+      "xgboost": 52.46,
+      "catboost": 51.91,
+      "lightgbm": 52.37
+    },
+    {
+      "timestamp": "2017-06-01T17:05:00+00:00",
+      "actual": 50.11,
+      "weighted": 51.77,
+      "xgboost": 52.02,
+      "catboost": 51.39,
+      "lightgbm": 51.9
+    },
+    {
+      "timestamp": "2017-06-01T17:10:00+00:00",
+      "actual": 49.46,
+      "weighted": 51.26,
+      "xgboost": 51.51,
+      "catboost": 50.87,
+      "lightgbm": 51.41
+    },
+    {
+      "timestamp": "2017-06-01T17:15:00+00:00",
+      "actual": 48.49,
+      "weighted": 50.73,
+      "xgboost": 51.03,
+      "catboost": 50.3,
+      "lightgbm": 50.88
+    },
+    {
+      "timestamp": "2017-06-01T17:20:00+00:00",
+      "actual": 47.51,
+      "weighted": 50.37,
+      "xgboost": 50.72,
+      "catboost": 49.9,
+      "lightgbm": 50.5
+    },
+    {
+      "timestamp": "2017-06-01T17:25:00+00:00",
+      "actual": 46.52,
+      "weighted": 50.02,
+      "xgboost": 50.37,
+      "catboost": 49.52,
+      "lightgbm": 50.18
+    },
+    {
+      "timestamp": "2017-06-01T17:30:00+00:00",
+      "actual": 46.0,
+      "weighted": 49.95,
+      "xgboost": 50.34,
+      "catboost": 49.43,
+      "lightgbm": 50.11
+    },
+    {
+      "timestamp": "2017-06-01T17:35:00+00:00",
+      "actual": 45.98,
+      "weighted": 49.89,
+      "xgboost": 50.29,
+      "catboost": 49.32,
+      "lightgbm": 50.07
+    },
+    {
+      "timestamp": "2017-06-01T17:40:00+00:00",
+      "actual": 45.98,
+      "weighted": 49.8,
+      "xgboost": 50.22,
+      "catboost": 49.2,
+      "lightgbm": 50.0
+    },
+    {
+      "timestamp": "2017-06-01T17:45:00+00:00",
+      "actual": 46.08,
+      "weighted": 49.75,
+      "xgboost": 50.12,
+      "catboost": 49.23,
+      "lightgbm": 49.93
+    },
+    {
+      "timestamp": "2017-06-01T17:50:00+00:00",
+      "actual": 46.23,
+      "weighted": 49.75,
+      "xgboost": 50.14,
+      "catboost": 49.23,
+      "lightgbm": 49.88
+    },
+    {
+      "timestamp": "2017-06-01T17:55:00+00:00",
+      "actual": 46.86,
+      "weighted": 49.94,
+      "xgboost": 50.35,
+      "catboost": 49.42,
+      "lightgbm": 50.06
+    },
+    {
+      "timestamp": "2017-06-01T18:00:00+00:00",
+      "actual": 47.75,
+      "weighted": 50.28,
+      "xgboost": 50.63,
+      "catboost": 49.81,
+      "lightgbm": 50.41
+    },
+    {
+      "timestamp": "2017-06-01T18:05:00+00:00",
+      "actual": 48.4,
+      "weighted": 50.65,
+      "xgboost": 50.93,
+      "catboost": 50.25,
+      "lightgbm": 50.78
+    },
+    {
+      "timestamp": "2017-06-01T18:10:00+00:00",
+      "actual": 48.7,
+      "weighted": 51.04,
+      "xgboost": 51.25,
+      "catboost": 50.72,
+      "lightgbm": 51.17
+    },
+    {
+      "timestamp": "2017-06-01T18:15:00+00:00",
+      "actual": 49.23,
+      "weighted": 51.38,
+      "xgboost": 51.58,
+      "catboost": 51.09,
+      "lightgbm": 51.47
+    },
+    {
+      "timestamp": "2017-06-01T18:20:00+00:00",
+      "actual": 49.76,
+      "weighted": 51.7,
+      "xgboost": 51.91,
+      "catboost": 51.4,
+      "lightgbm": 51.79
+    },
+    {
+      "timestamp": "2017-06-01T18:25:00+00:00",
+      "actual": 50.52,
+      "weighted": 52.18,
+      "xgboost": 52.38,
+      "catboost": 51.91,
+      "lightgbm": 52.25
+    },
+    {
+      "timestamp": "2017-06-01T18:30:00+00:00",
+      "actual": 51.54,
+      "weighted": 52.54,
+      "xgboost": 52.74,
+      "catboost": 52.31,
+      "lightgbm": 52.6
+    },
+    {
+      "timestamp": "2017-06-01T18:35:00+00:00",
+      "actual": 52.48,
+      "weighted": 52.98,
+      "xgboost": 53.13,
+      "catboost": 52.79,
+      "lightgbm": 53.01
+    },
+    {
+      "timestamp": "2017-06-01T18:40:00+00:00",
+      "actual": 53.41,
+      "weighted": 53.36,
+      "xgboost": 53.38,
+      "catboost": 53.31,
+      "lightgbm": 53.4
+    },
+    {
+      "timestamp": "2017-06-01T18:45:00+00:00",
+      "actual": 54.36,
+      "weighted": 53.92,
+      "xgboost": 53.94,
+      "catboost": 53.86,
+      "lightgbm": 53.95
+    },
+    {
+      "timestamp": "2017-06-01T18:50:00+00:00",
+      "actual": 55.33,
+      "weighted": 54.51,
+      "xgboost": 54.56,
+      "catboost": 54.47,
+      "lightgbm": 54.5
+    },
+    {
+      "timestamp": "2017-06-01T18:55:00+00:00",
+      "actual": 56.44,
+      "weighted": 55.19,
+      "xgboost": 55.17,
+      "catboost": 55.24,
+      "lightgbm": 55.16
+    },
+    {
+      "timestamp": "2017-06-01T19:00:00+00:00",
+      "actual": 57.91,
+      "weighted": 56.18,
+      "xgboost": 56.14,
+      "catboost": 56.26,
+      "lightgbm": 56.13
+    },
+    {
+      "timestamp": "2017-06-01T19:05:00+00:00",
+      "actual": 59.1,
+      "weighted": 57.09,
+      "xgboost": 57.0,
+      "catboost": 57.22,
+      "lightgbm": 57.04
+    },
+    {
+      "timestamp": "2017-06-01T19:10:00+00:00",
+      "actual": 59.92,
+      "weighted": 57.75,
+      "xgboost": 57.68,
+      "catboost": 57.86,
+      "lightgbm": 57.71
+    },
+    {
+      "timestamp": "2017-06-01T19:15:00+00:00",
+      "actual": 60.84,
+      "weighted": 58.21,
+      "xgboost": 58.14,
+      "catboost": 58.32,
+      "lightgbm": 58.18
+    },
+    {
+      "timestamp": "2017-06-01T19:20:00+00:00",
+      "actual": 61.7,
+      "weighted": 58.72,
+      "xgboost": 58.7,
+      "catboost": 58.81,
+      "lightgbm": 58.66
+    },
+    {
+      "timestamp": "2017-06-01T19:25:00+00:00",
+      "actual": 62.64,
+      "weighted": 59.42,
+      "xgboost": 59.42,
+      "catboost": 59.48,
+      "lightgbm": 59.36
+    },
+    {
+      "timestamp": "2017-06-01T19:30:00+00:00",
+      "actual": 63.51,
+      "weighted": 60.24,
+      "xgboost": 60.23,
+      "catboost": 60.31,
+      "lightgbm": 60.19
+    },
+    {
+      "timestamp": "2017-06-01T19:35:00+00:00",
+      "actual": 64.17,
+      "weighted": 61.02,
+      "xgboost": 60.97,
+      "catboost": 61.12,
+      "lightgbm": 60.97
+    },
+    {
+      "timestamp": "2017-06-01T19:40:00+00:00",
+      "actual": 64.52,
+      "weighted": 61.84,
+      "xgboost": 61.73,
+      "catboost": 61.95,
+      "lightgbm": 61.83
+    },
+    {
+      "timestamp": "2017-06-01T19:45:00+00:00",
+      "actual": 64.75,
+      "weighted": 62.68,
+      "xgboost": 62.64,
+      "catboost": 62.76,
+      "lightgbm": 62.64
+    },
+    {
+      "timestamp": "2017-06-01T19:50:00+00:00",
+      "actual": 65.11,
+      "weighted": 63.37,
+      "xgboost": 63.33,
+      "catboost": 63.43,
+      "lightgbm": 63.34
+    },
+    {
+      "timestamp": "2017-06-01T19:55:00+00:00",
+      "actual": 65.47,
+      "weighted": 63.95,
+      "xgboost": 63.91,
+      "catboost": 63.99,
+      "lightgbm": 63.94
+    },
+    {
+      "timestamp": "2017-06-01T20:00:00+00:00",
+      "actual": 65.88,
+      "weighted": 64.61,
+      "xgboost": 64.59,
+      "catboost": 64.64,
+      "lightgbm": 64.59
+    },
+    {
+      "timestamp": "2017-06-01T20:05:00+00:00",
+      "actual": 66.27,
+      "weighted": 64.95,
+      "xgboost": 64.93,
+      "catboost": 64.97,
+      "lightgbm": 64.94
+    },
+    {
+      "timestamp": "2017-06-01T20:10:00+00:00",
+      "actual": 66.35,
+      "weighted": 65.16,
+      "xgboost": 65.15,
+      "catboost": 65.18,
+      "lightgbm": 65.14
+    },
+    {
+      "timestamp": "2017-06-01T20:15:00+00:00",
+      "actual": 66.4,
+      "weighted": 65.34,
+      "xgboost": 65.33,
+      "catboost": 65.38,
+      "lightgbm": 65.31
+    },
+    {
+      "timestamp": "2017-06-01T20:20:00+00:00",
+      "actual": 66.44,
+      "weighted": 65.45,
+      "xgboost": 65.44,
+      "catboost": 65.47,
+      "lightgbm": 65.44
+    },
+    {
+      "timestamp": "2017-06-01T20:25:00+00:00",
+      "actual": 66.5,
+      "weighted": 65.63,
+      "xgboost": 65.6,
+      "catboost": 65.67,
+      "lightgbm": 65.62
+    },
+    {
+      "timestamp": "2017-06-01T20:30:00+00:00",
+      "actual": 66.52,
+      "weighted": 65.64,
+      "xgboost": 65.61,
+      "catboost": 65.67,
+      "lightgbm": 65.63
+    },
+    {
+      "timestamp": "2017-06-01T20:35:00+00:00",
+      "actual": 66.33,
+      "weighted": 65.64,
+      "xgboost": 65.6,
+      "catboost": 65.67,
+      "lightgbm": 65.63
+    },
+    {
+      "timestamp": "2017-06-01T20:40:00+00:00",
+      "actual": 66.23,
+      "weighted": 65.52,
+      "xgboost": 65.49,
+      "catboost": 65.55,
+      "lightgbm": 65.52
+    },
+    {
+      "timestamp": "2017-06-01T20:45:00+00:00",
+      "actual": 65.85,
+      "weighted": 65.42,
+      "xgboost": 65.4,
+      "catboost": 65.42,
+      "lightgbm": 65.43
+    },
+    {
+      "timestamp": "2017-06-01T20:50:00+00:00",
+      "actual": 65.6,
+      "weighted": 65.35,
+      "xgboost": 65.34,
+      "catboost": 65.36,
+      "lightgbm": 65.35
+    },
+    {
+      "timestamp": "2017-06-01T20:55:00+00:00",
+      "actual": 65.24,
+      "weighted": 65.19,
+      "xgboost": 65.18,
+      "catboost": 65.2,
+      "lightgbm": 65.2
+    },
+    {
+      "timestamp": "2017-06-01T21:00:00+00:00",
+      "actual": 65.3,
+      "weighted": 65.58,
+      "xgboost": 65.6,
+      "catboost": 65.56,
+      "lightgbm": 65.59
+    },
+    {
+      "timestamp": "2017-06-01T21:05:00+00:00",
+      "actual": 65.38,
+      "weighted": 65.8,
+      "xgboost": 65.84,
+      "catboost": 65.74,
+      "lightgbm": 65.82
+    },
+    {
+      "timestamp": "2017-06-01T21:10:00+00:00",
+      "actual": 65.42,
+      "weighted": 65.81,
+      "xgboost": 65.86,
+      "catboost": 65.74,
+      "lightgbm": 65.82
+    },
+    {
+      "timestamp": "2017-06-01T21:15:00+00:00",
+      "actual": 65.62,
+      "weighted": 65.84,
+      "xgboost": 65.9,
+      "catboost": 65.75,
+      "lightgbm": 65.87
+    },
+    {
+      "timestamp": "2017-06-01T21:20:00+00:00",
+      "actual": 65.8,
+      "weighted": 65.93,
+      "xgboost": 65.99,
+      "catboost": 65.83,
+      "lightgbm": 65.96
+    },
+    {
+      "timestamp": "2017-06-01T21:25:00+00:00",
+      "actual": 66.03,
+      "weighted": 65.93,
+      "xgboost": 65.98,
+      "catboost": 65.84,
+      "lightgbm": 65.96
+    },
+    {
+      "timestamp": "2017-06-01T21:30:00+00:00",
+      "actual": 66.4,
+      "weighted": 66.07,
+      "xgboost": 66.12,
+      "catboost": 65.99,
+      "lightgbm": 66.08
+    },
+    {
+      "timestamp": "2017-06-01T21:35:00+00:00",
+      "actual": 66.8,
+      "weighted": 66.21,
+      "xgboost": 66.24,
+      "catboost": 66.17,
+      "lightgbm": 66.22
+    },
+    {
+      "timestamp": "2017-06-01T21:40:00+00:00",
+      "actual": 66.93,
+      "weighted": 66.28,
+      "xgboost": 66.28,
+      "catboost": 66.25,
+      "lightgbm": 66.3
+    },
+    {
+      "timestamp": "2017-06-01T21:45:00+00:00",
+      "actual": 67.17,
+      "weighted": 66.37,
+      "xgboost": 66.34,
+      "catboost": 66.38,
+      "lightgbm": 66.39
+    },
+    {
+      "timestamp": "2017-06-01T21:50:00+00:00",
+      "actual": 67.37,
+      "weighted": 66.52,
+      "xgboost": 66.49,
+      "catboost": 66.54,
+      "lightgbm": 66.54
+    },
+    {
+      "timestamp": "2017-06-01T21:55:00+00:00",
+      "actual": 67.31,
+      "weighted": 66.54,
+      "xgboost": 66.52,
+      "catboost": 66.56,
+      "lightgbm": 66.54
+    },
+    {
+      "timestamp": "2017-06-01T22:00:00+00:00",
+      "actual": 67.06,
+      "weighted": 66.3,
+      "xgboost": 66.29,
+      "catboost": 66.31,
+      "lightgbm": 66.29
+    },
+    {
+      "timestamp": "2017-06-01T22:05:00+00:00",
+      "actual": 66.97,
+      "weighted": 66.27,
+      "xgboost": 66.27,
+      "catboost": 66.28,
+      "lightgbm": 66.27
+    },
+    {
+      "timestamp": "2017-06-01T22:10:00+00:00",
+      "actual": 66.93,
+      "weighted": 66.31,
+      "xgboost": 66.29,
+      "catboost": 66.32,
+      "lightgbm": 66.31
+    },
+    {
+      "timestamp": "2017-06-01T22:15:00+00:00",
+      "actual": 66.9,
+      "weighted": 66.32,
+      "xgboost": 66.31,
+      "catboost": 66.35,
+      "lightgbm": 66.32
+    },
+    {
+      "timestamp": "2017-06-01T22:20:00+00:00",
+      "actual": 66.95,
+      "weighted": 66.43,
+      "xgboost": 66.39,
+      "catboost": 66.45,
+      "lightgbm": 66.43
+    },
+    {
+      "timestamp": "2017-06-01T22:25:00+00:00",
+      "actual": 66.91,
+      "weighted": 66.55,
+      "xgboost": 66.51,
+      "catboost": 66.59,
+      "lightgbm": 66.54
+    },
+    {
+      "timestamp": "2017-06-01T22:30:00+00:00",
+      "actual": 66.93,
+      "weighted": 66.54,
+      "xgboost": 66.51,
+      "catboost": 66.56,
+      "lightgbm": 66.53
+    },
+    {
+      "timestamp": "2017-06-01T22:35:00+00:00",
+      "actual": 67.06,
+      "weighted": 66.55,
+      "xgboost": 66.52,
+      "catboost": 66.58,
+      "lightgbm": 66.55
+    },
+    {
+      "timestamp": "2017-06-01T22:40:00+00:00",
+      "actual": 67.01,
+      "weighted": 66.52,
+      "xgboost": 66.49,
+      "catboost": 66.56,
+      "lightgbm": 66.51
+    },
+    {
+      "timestamp": "2017-06-01T22:45:00+00:00",
+      "actual": 67.18,
+      "weighted": 66.56,
+      "xgboost": 66.53,
+      "catboost": 66.6,
+      "lightgbm": 66.56
+    },
+    {
+      "timestamp": "2017-06-01T22:50:00+00:00",
+      "actual": 67.15,
+      "weighted": 66.61,
+      "xgboost": 66.56,
+      "catboost": 66.67,
+      "lightgbm": 66.61
+    },
+    {
+      "timestamp": "2017-06-01T22:55:00+00:00",
+      "actual": 67.24,
+      "weighted": 66.55,
+      "xgboost": 66.52,
+      "catboost": 66.57,
+      "lightgbm": 66.55
+    },
+    {
+      "timestamp": "2017-06-01T23:00:00+00:00",
+      "actual": 66.71,
+      "weighted": 66.48,
+      "xgboost": 66.47,
+      "catboost": 66.5,
+      "lightgbm": 66.48
+    },
+    {
+      "timestamp": "2017-06-01T23:05:00+00:00",
+      "actual": 66.68,
+      "weighted": 66.45,
+      "xgboost": 66.45,
+      "catboost": 66.47,
+      "lightgbm": 66.45
+    },
+    {
+      "timestamp": "2017-06-01T23:10:00+00:00",
+      "actual": 66.88,
+      "weighted": 66.46,
+      "xgboost": 66.46,
+      "catboost": 66.47,
+      "lightgbm": 66.46
+    },
+    {
+      "timestamp": "2017-06-01T23:15:00+00:00",
+      "actual": 66.79,
+      "weighted": 66.44,
+      "xgboost": 66.44,
+      "catboost": 66.44,
+      "lightgbm": 66.43
+    },
+    {
+      "timestamp": "2017-06-01T23:20:00+00:00",
+      "actual": 66.87,
+      "weighted": 66.43,
+      "xgboost": 66.43,
+      "catboost": 66.43,
+      "lightgbm": 66.42
+    },
+    {
+      "timestamp": "2017-06-01T23:25:00+00:00",
+      "actual": 66.99,
+      "weighted": 66.38,
+      "xgboost": 66.38,
+      "catboost": 66.38,
+      "lightgbm": 66.37
+    },
+    {
+      "timestamp": "2017-06-01T23:30:00+00:00",
+      "actual": 66.9,
+      "weighted": 66.4,
+      "xgboost": 66.39,
+      "catboost": 66.41,
+      "lightgbm": 66.39
+    },
+    {
+      "timestamp": "2017-06-01T23:35:00+00:00",
+      "actual": 66.7,
+      "weighted": 66.44,
+      "xgboost": 66.44,
+      "catboost": 66.43,
+      "lightgbm": 66.44
+    },
+    {
+      "timestamp": "2017-06-01T23:40:00+00:00",
+      "actual": 66.66,
+      "weighted": 66.46,
+      "xgboost": 66.45,
+      "catboost": 66.47,
+      "lightgbm": 66.46
+    },
+    {
+      "timestamp": "2017-06-01T23:45:00+00:00",
+      "actual": 66.83,
+      "weighted": 66.42,
+      "xgboost": 66.41,
+      "catboost": 66.43,
+      "lightgbm": 66.42
+    },
+    {
+      "timestamp": "2017-06-01T23:50:00+00:00",
+      "actual": 66.71,
+      "weighted": 66.31,
+      "xgboost": 66.31,
+      "catboost": 66.32,
+      "lightgbm": 66.3
+    },
+    {
+      "timestamp": "2017-06-01T23:55:00+00:00",
+      "actual": 66.87,
+      "weighted": 66.25,
+      "xgboost": 66.26,
+      "catboost": 66.24,
+      "lightgbm": 66.24
+    }
+  ]
+}
