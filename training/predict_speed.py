@@ -42,6 +42,10 @@ EXIT_INSUFFICIENT_DATA = 3
 class InsufficientDataError(RuntimeError):
     """None of the historical references needed for a prediction exists."""
 
+    def __init__(self, message: str, result: dict[str, object]):
+        super().__init__(message)
+        self.result = result
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
@@ -143,7 +147,7 @@ def predict(
             f"previous-week or previous-year speed for {target.isoformat()}."
         )
         LOGGER.warning(message)
-        raise InsufficientDataError(message)
+        raise InsufficientDataError(message, result)
 
     models, metrics = model_loader(artifacts_dir)
     row = {

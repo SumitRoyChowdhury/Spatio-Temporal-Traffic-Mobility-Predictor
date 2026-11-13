@@ -132,3 +132,48 @@ The current dataset covers only January to May 2017, so the previous-year
 reference is never available. The models learn from the previous-day and
 previous-week references only. A previous-year speed found later has no
 effect until the models are retrained on more than a year of data.
+
+## Dashboard
+
+A React dashboard (in `dashboard/`) takes a location (sensor) and a timestamp
+and shows one predicted speed per model (XGBoost, CatBoost, LightGBM), the
+references that were used, and the recorded speed when it exists. Pick a
+location from the list or by clicking a sensor on the map. Times are UTC.
+
+The dashboard talks to a small Python API, `training/api.py`, which loads the
+three trained models once and reads references from PostgreSQL. Train the
+models first (see above), then:
+
+```sh
+cd dashboard && npm install && npm run build && cd ..
+./.venv/bin/python -m training.api
+```
+
+Open http://127.0.0.1:8000. For front-end development, keep the API running
+and use `npm run dev` in `dashboard/` (Vite proxies `/api` to port 8000).
+
+API endpoints:
+
+- `GET /api/meta`: sensors with location details, the data range, and each
+  model's validation error.
+- `GET /api/predict?sensor_id=400001&timestamp=2017-05-15T08:30`: the three
+  predictions. It returns HTTP 422 with `insufficient_data: true` when no
+  previous-day, previous-week or previous-year reading exists. Once ensemble
+  weights are fitted (below) it also returns `weighted_predicted_speed`.
+- `GET /api/evaluation`: held-out test results, ensemble weights and the
+  time-of-day chart data shown at the bottom of the dashboard.
+
+## Test-set evaluation and weighted ensemble
+
+Score the three models on a held-out CSV in the PEMS-BAY wide layout (one
+column per sensor, timestamps in `Unnamed: 0`) and fit ensemble weights:
+
+```sh
+./.venv/bin/python -m training.evaluate_ensemble ../first_week_june_2017.csv
+```
+
+Features for each test reading are read from PostgreSQL as at prediction
+time. The weights are the non-negative coefficients summing to 1 that minimise
+squared error on the test data. Because they are fitted on that data, the
+script also reports a 6-fold time-blocked cross-validated score. Results go to
+`model_artifacts/ensemble_weights.json`; restart the API to pick them up.
