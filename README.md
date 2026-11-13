@@ -1,5 +1,10 @@
 # Gridlock traffic data pipeline
 
+**Live dashboard: [gridlock-dashboard-48wd.onrender.com](https://gridlock-dashboard-48wd.onrender.com)**
+
+> Hosted on Render's free tier: the first visit after a quiet spell can take
+> 30–60 seconds while the server wakes up. Predictions cover 19 May – 7 June 2017.
+
 The Node.js ingestion pipeline validates the wide traffic-speed CSV against the
 sensor metadata CSV and persists normalized observations and rejected records
 to PostgreSQL using Prisma. An independent Python training workflow reads the
