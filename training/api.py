@@ -157,6 +157,9 @@ class DashboardHandler(BaseHTTPRequestHandler):
         except Exception:
             return {}
 
+    def do_HEAD(self) -> None:  # noqa: N802
+        self.do_GET()
+
     def do_GET(self) -> None:  # noqa: N802
         url = urlsplit(self.path)
         path = url.path.rstrip("/")

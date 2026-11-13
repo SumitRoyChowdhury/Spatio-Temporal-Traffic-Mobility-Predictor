@@ -10,9 +10,9 @@ RUN npm ci
 COPY dashboard/ ./
 RUN npm run build
 
-FROM python:3.14-slim
-# LightGBM and XGBoost need OpenMP; C/C++ compiler for extension packages.
-RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 build-essential \
+FROM python:3.12-slim
+# LightGBM and XGBoost need OpenMP.
+RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 ENV PYTHONUNBUFFERED=1 \
@@ -21,6 +21,7 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 COPY training/ training/
 COPY model_artifacts/ model_artifacts/
+COPY PEMS-BAY-META.csv ./
 COPY --from=dashboard /app/dashboard/dist dashboard/dist
 EXPOSE 10000
 CMD ["sh", "-c", "python -m training.api --host 0.0.0.0 --port ${PORT:-10000}"]
