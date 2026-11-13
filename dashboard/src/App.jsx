@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import SensorMap from "./SensorMap.jsx";
 import Evaluation from "./Evaluation.jsx";
+import ThemeToggle from "./ThemeToggle.jsx";
 
 const MODELS = [
   { key: "xgboost", label: "XGBoost" },
@@ -89,11 +90,14 @@ export default function App() {
   return (
     <div className="page">
       <header className="header">
-        <h1>Traffic speed forecast</h1>
-        <p className="subtle">
-          Predicted from the speed at the same place and time one day, one week and one
-          year earlier.
-        </p>
+        <div>
+          <h1>Traffic speed forecast</h1>
+          <p className="subtle">
+            Predicted from the speed at the same place and time one day, one week and one
+            year earlier.
+          </p>
+        </div>
+        <ThemeToggle />
       </header>
 
       {metaError && <p className="banner">{metaError}</p>}
