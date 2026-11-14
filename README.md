@@ -323,6 +323,62 @@ Thresholds are configurable globally and per-sensor via `sensor_configurations`.
 | `PATCH` | `/api/sensors/:id/config` | Update sensor reporting interval and alert thresholds |
 | `POST` | `/api/sensors/health/check` | Trigger an immediate monitoring audit cycle |
 
+---
+
+## Explainable AI (XAI) – Why Did the Model Predict This Speed?
+
+GridLock includes an Explainable AI (XAI) engine powered by **TreeSHAP** (Tree Shapley Additive Explanations). It provides mathematical transparency, local feature attributions, and global interpretability across **LightGBM**, **XGBoost**, **CatBoost**, and the **Weighted Ensemble**.
+
+### Key Architectural Pillars
+
+1. **TreeSHAP Feature Attributions**:
+   TreeSHAP computes exact Shapley values in polynomial time by traversing tree structures. Every prediction satisfies the **Efficiency / Additivity Property**:
+   $$f(x) = E[f(x)] + \sum_{j=1}^{M} \phi_j$$
+   where $E[f(x)]$ is the dataset baseline speed (~62.3 mph) and $\phi_j$ is feature $j$'s marginal contribution in mph.
+
+2. **Weighted Ensemble Attribution**:
+   Because the ensemble is a linear combination of models ($f_{\text{ens}}(x) = \sum_{m} w_m f_m(x)$ where $\sum w_m = 1$), exact Shapley linearity guarantees:
+   $$\text{Base}_{\text{ens}} = \sum_{m} w_m \text{Base}_m, \quad \phi_{\text{ens}, j} = \sum_{m} w_m \phi_{m, j}$$
+   This achieves mathematical reconciliation between individual model splits and the final ensemble.
+
+3. **Multi-Model Splitting Insights**:
+   - **LightGBM**: Fast histogram-based leaf-wise growth that prioritizes high-gradient speed dropoffs.
+   - **XGBoost**: Regularized depth-wise growth that balances lag momentum with second-order curvature penalties.
+   - **CatBoost**: Symmetric (oblivious) trees that prevent overfitting on continuous sensor lag correlations.
+
+4. **Visualizations**:
+   - **TreeSHAP Waterfall Chart**: Step-by-step contribution waterfall from expected baseline to predicted vehicle speed.
+   - **Global Feature Importance**: Mean absolute SHAP ranking ($E[|\phi|]$) quantifying macroscopic feature influence.
+   - **SHAP Beeswarm Summary Plot**: Scatter plot displaying directionality (whether high feature values speed up or slow down traffic).
+   - **Automated Natural Language Reasoning**: Rule-based plain English interpretation with transparency disclaimers.
+
+### Explainability REST APIs
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/explainability/models` | List available models, architecture types, and ensemble weights |
+| `GET` | `/api/explainability/prediction` | Local TreeSHAP explanation for a given `sensor_id`, `timestamp`, and `model` |
+| `POST` | `/api/explainability/prediction` | Same as GET with JSON payload, persisting explanation to database |
+| `GET` | `/api/explainability/model-comparison` | Side-by-side comparison of predictions and top drivers across all 4 models |
+| `GET` | `/api/explainability/feature-importance` | Global mean absolute SHAP values and relative importance percentages |
+| `GET` | `/api/explainability/beeswarm` | Sampled distribution points for interactive SHAP beeswarm visualizations |
+| `GET` | `/api/explainability/history` | Retrieve saved explanations from PostgreSQL `prediction_explanations` table |
+| `GET` | `/api/explainability/history/:locationId` | Historical explanations filtered by sensor location |
+
+### Database Table Added
+
+- **`prediction_explanations`**:
+  - `id` (VARCHAR, PRIMARY KEY)
+  - `sensor_id` (BIGINT, REFERENCES sensors)
+  - `target_timestamp` (TIMESTAMPTZ)
+  - `model_name` (VARCHAR: ensemble, xgboost, catboost, lightgbm)
+  - `predicted_speed` (FLOAT)
+  - `baseline_speed` (FLOAT)
+  - `net_difference` (FLOAT)
+  - `shap_values` (JSONB)
+  - `text_explanation` (TEXT)
+  - `created_at` (TIMESTAMPTZ)
+
 ### Running the Test Suite
 
 Run all unit and integration tests:
