@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import SensorMap from "./SensorMap.jsx";
 import Evaluation from "./Evaluation.jsx";
 import ThemeToggle from "./ThemeToggle.jsx";
+import AnomalyDetection from "./AnomalyDetection.jsx";
 
 const MODELS = [
   { key: "xgboost", label: "XGBoost" },
@@ -85,7 +86,14 @@ function groupSensors(sensors) {
     }));
 }
 
+/* ─── TABS ─── */
+const TABS = [
+  { id: "forecast", label: "Traffic Forecast" },
+  { id: "anomaly", label: "Anomaly Detection" },
+];
+
 export default function App() {
+  const [activeTab, setActiveTab] = useState("forecast");
   const [meta, setMeta] = useState(null);
   const [metaError, setMetaError] = useState("");
   const [sensorId, setSensorId] = useState(DEFAULT_SENSOR);
@@ -130,95 +138,106 @@ export default function App() {
     <div className="page">
       <header className="header">
         <div>
-          <h1>Traffic speed forecast</h1>
+          <h1>Gridlock</h1>
           <p className="subtle">
-            Predicted from the speed at the same place and time one day, one week and one
-            year earlier.
+            Spatio-Temporal Traffic Mobility Predictor
           </p>
         </div>
-        {/* Traffic Anomaly Detection panel */}
-        <div className="card anomaly-card">
-          <h3>Traffic Anomaly Detection</h3>
-          {result.anomaly_detected ? (
-            <>
-              <p className="subtle small">
-                <strong>Severity:</strong> {result.anomaly_severity}<br/>
-                <strong>Type:</strong> {result.anomaly_type}<br/>
-                <strong>Explanation:</strong> {result.anomaly_explanation}
-              </p>
-            </>
-          ) : (
-            <p className="subtle small">NORMAL TRAFFIC</p>
-          )}
-        </div>
-       <References result={result} />
         <ThemeToggle />
       </header>
 
+      {/* Navigation tabs */}
+      <nav className="nav-tabs" role="tablist" aria-label="Dashboard sections">
+        {TABS.map((tab) => (
+          <button
+            key={tab.id}
+            type="button"
+            role="tab"
+            aria-selected={activeTab === tab.id}
+            className={`nav-tab${activeTab === tab.id ? " nav-tab-active" : ""}`}
+            onClick={() => setActiveTab(tab.id)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </nav>
+
       {metaError && <p className="banner">{metaError}</p>}
 
-      <main className="layout">
-        <form className="card controls" onSubmit={runPrediction}>
-          <label className="field">
-            <span>Location</span>
-            <select
-              value={sensorId}
-              onChange={(event) => setSensorId(Number(event.target.value))}
-              disabled={!meta}
-            >
-              {!meta && <option>Loading sensors…</option>}
-              {groups.map((group) => (
-                <optgroup key={group.key} label={group.key}>
-                  {group.sensors.map((sensor) => (
-                    <option key={sensor.sensor_id} value={sensor.sensor_id}>
-                      {sensorLabel(sensor)}
-                    </option>
+      {/* ─── Traffic Forecast tab ─── */}
+      {activeTab === "forecast" && (
+        <>
+          <main className="layout">
+            <form className="card controls" onSubmit={runPrediction}>
+              <label className="field">
+                <span>Location</span>
+                <select
+                  value={sensorId}
+                  onChange={(event) => setSensorId(Number(event.target.value))}
+                  disabled={!meta}
+                >
+                  {!meta && <option>Loading sensors…</option>}
+                  {groups.map((group) => (
+                    <optgroup key={group.key} label={group.key}>
+                      {group.sensors.map((sensor) => (
+                        <option key={sensor.sensor_id} value={sensor.sensor_id}>
+                          {sensorLabel(sensor)}
+                        </option>
+                      ))}
+                    </optgroup>
                   ))}
-                </optgroup>
-              ))}
-            </select>
-          </label>
+                </select>
+              </label>
 
-          {meta && (
-            <SensorMap sensors={meta.sensors} selectedId={sensorId} onSelect={setSensorId} />
-          )}
-          {selected && (
-            <p className="subtle small">
-              Fwy {selected.freeway} {selected.direction} · {selected.name || "Unnamed"} ·{" "}
-              {selected.latitude?.toFixed(4)}, {selected.longitude?.toFixed(4)}
-            </p>
-          )}
+              {meta && (
+                <SensorMap sensors={meta.sensors} selectedId={sensorId} onSelect={setSensorId} />
+              )}
+              {selected && (
+                <p className="subtle small">
+                  Fwy {selected.freeway} {selected.direction} · {selected.name || "Unnamed"} ·{" "}
+                  {selected.latitude?.toFixed(4)}, {selected.longitude?.toFixed(4)}
+                </p>
+              )}
 
-          <label className="field">
-            <span>Date and time (UTC)</span>
-            <input
-              type="datetime-local"
-              step="300"
-              value={timestamp}
-              onChange={(event) => setTimestamp(event.target.value)}
-              required
-            />
-          </label>
-          {meta?.data_start && (
-            <p className="subtle small">
-              Recorded data covers {formatTime(meta.data_start)} to {formatTime(meta.data_end)}.
-            </p>
-          )}
+              <label className="field">
+                <span>Date and time (UTC)</span>
+                <input
+                  type="datetime-local"
+                  step="300"
+                  value={timestamp}
+                  onChange={(event) => setTimestamp(event.target.value)}
+                  required
+                />
+              </label>
+              {meta?.data_start && (
+                <p className="subtle small">
+                  Recorded data covers {formatTime(meta.data_start)} to {formatTime(meta.data_end)}.
+                </p>
+              )}
 
-          <button type="submit" disabled={!meta || state.status === "loading"}>
-            {state.status === "loading" ? "Predicting…" : "Predict speed"}
-          </button>
-        </form>
+              <button type="submit" disabled={!meta || state.status === "loading"}>
+                {state.status === "loading" ? "Predicting…" : "Predict speed"}
+              </button>
+            </form>
 
-        <section className="results" aria-live="polite">
-          <Results state={state} meta={meta} sensor={selected} />
-        </section>
-      </main>
+            <section className="results" aria-live="polite">
+              <Results state={state} meta={meta} sensor={selected} />
+            </section>
+          </main>
 
-      <Evaluation />
+          <Evaluation />
+        </>
+      )}
+
+      {/* ─── Anomaly Detection tab ─── */}
+      {activeTab === "anomaly" && (
+        <AnomalyDetection meta={meta} groups={groups} sensorsById={sensorsById} />
+      )}
     </div>
   );
 }
+
+/* ─── RESULTS (Traffic Forecast) ─── */
 
 function Results({ state, meta, sensor }) {
   if (state.status === "idle" || state.status === "loading") {
@@ -252,22 +271,6 @@ function Results({ state, meta, sensor }) {
           <strong>Current data is not sufficient to predict the traffic speed.</strong>
           <p>No previous-day, previous-week or previous-year reading exists for this location and time.</p>
         </div>
-        {/* Traffic Anomaly Detection panel */}
-        <div className="card anomaly-card">
-          <h3>Traffic Anomaly Detection</h3>
-          {result.anomaly_detected ? (
-            <>
-              <p className="subtle small">
-                <strong>Severity:</strong> {result.anomaly_severity}<br/>
-                <strong>Type:</strong> {result.anomaly_type}<br/>
-                <strong>Explanation:</strong> {result.anomaly_explanation}
-              </p>
-            </>
-          ) : (
-            <p className="subtle small">NORMAL TRAFFIC</p>
-          )}
-        </div>
-       <References result={result} />
         <References result={result} />
       </>
     );
@@ -295,22 +298,6 @@ function Results({ state, meta, sensor }) {
                 <span className="congestion-dot" aria-hidden="true" />
                 <span className="congestion-label">{category}</span>
               </div>
-        {/* Traffic Anomaly Detection panel */}
-        <div className="card anomaly-card">
-          <h3>Traffic Anomaly Detection</h3>
-          {result.anomaly_detected ? (
-            <>
-              <p className="subtle small">
-                <strong>Severity:</strong> {result.anomaly_severity}<br/>
-                <strong>Type:</strong> {result.anomaly_type}<br/>
-                <strong>Explanation:</strong> {result.anomaly_explanation}
-              </p>
-            </>
-          ) : (
-            <p className="subtle small">NORMAL TRAFFIC</p>
-          )}
-        </div>
-       <References result={result} />
               {meta?.models?.[model.key] && (
                 <p className="subtle small">
                   Typical error ±{meta.models[model.key].mae.toFixed(1)} mph
@@ -327,39 +314,7 @@ function Results({ state, meta, sensor }) {
             <span className="congestion-dot" aria-hidden="true" />
             <span className="congestion-label">{overallCategory}</span>
           </div>
-        {/* Traffic Anomaly Detection panel */}
-        <div className="card anomaly-card">
-          <h3>Traffic Anomaly Detection</h3>
-          {result.anomaly_detected ? (
-            <>
-              <p className="subtle small">
-                <strong>Severity:</strong> {result.anomaly_severity}<br/>
-                <strong>Type:</strong> {result.anomaly_type}<br/>
-                <strong>Explanation:</strong> {result.anomaly_explanation}
-              </p>
-            </>
-          ) : (
-            <p className="subtle small">NORMAL TRAFFIC</p>
-          )}
         </div>
-       <References result={result} />
-        </div>
-        {/* Traffic Anomaly Detection panel */}
-        <div className="card anomaly-card">
-          <h3>Traffic Anomaly Detection</h3>
-          {result.anomaly_detected ? (
-            <>
-              <p className="subtle small">
-                <strong>Severity:</strong> {result.anomaly_severity}<br/>
-                <strong>Type:</strong> {result.anomaly_type}<br/>
-                <strong>Explanation:</strong> {result.anomaly_explanation}
-              </p>
-            </>
-          ) : (
-            <p className="subtle small">NORMAL TRAFFIC</p>
-          )}
-        </div>
-       <References result={result} />
         <p className="subtle small overall-subtext">
           {result.weighted_predicted_speed != null && (
             <>

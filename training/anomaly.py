@@ -82,9 +82,9 @@ def detect_anomaly(
     # Median and MAD of the historical set.
     median = statistics.median(valid_hist)
     mad = _median_absolute_deviation(valid_hist, median)
-    # Guard against zero MAD – use a small epsilon to avoid division by zero.
-    if mad == 0:
-        mad = 1e-6
+    # Guard against zero or near-zero MAD: use a minimum floor (1.0 mph)
+    # to prevent tiny speed differences from producing false HIGH severity anomalies.
+    effective_mad = max(mad, 1.0)
 
     # Validate current speed.
     try:
@@ -95,7 +95,7 @@ def detect_anomaly(
         return False, "", "", "Current speed is missing or invalid, cannot evaluate anomaly."
 
     deviation = abs(cur - median)
-    ratio = deviation / mad
+    ratio = deviation / effective_mad
 
     if ratio > thresholds.high:
         severity = "HIGH"

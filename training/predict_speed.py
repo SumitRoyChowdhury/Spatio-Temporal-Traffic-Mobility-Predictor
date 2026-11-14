@@ -173,7 +173,8 @@ def predict(
     }
     result["overall_congestion"] = classify_speed(result["mean_predicted_speed"])
     # Anomaly detection based on historical reference speeds
-    from training.anomaly import detect_anomaly
+    from training.anomaly import detect_anomaly, _median_absolute_deviation
+    import statistics as _stats
     # Gather historical speeds used for references (ignore None)
     historical_vals = [speed for speed in references.values() if speed is not None]
     detected, severity, a_type, explanation = detect_anomaly(historical_vals, result["mean_predicted_speed"])
@@ -181,6 +182,18 @@ def predict(
     result["anomaly_severity"] = severity
     result["anomaly_type"] = a_type
     result["anomaly_explanation"] = explanation
+    # Diagnostic fields for the anomaly detection dashboard
+    result["anomaly_current_speed"] = result["mean_predicted_speed"]
+    if historical_vals:
+        hist_median = _stats.median(historical_vals)
+        hist_mad = _median_absolute_deviation(historical_vals, hist_median)
+        result["anomaly_historical_median"] = hist_median
+        result["anomaly_mad"] = hist_mad if hist_mad > 1e-6 else 0.0
+        result["anomaly_deviation"] = abs(result["mean_predicted_speed"] - hist_median)
+    else:
+        result["anomaly_historical_median"] = None
+        result["anomaly_mad"] = None
+        result["anomaly_deviation"] = None
     return result
 
 
