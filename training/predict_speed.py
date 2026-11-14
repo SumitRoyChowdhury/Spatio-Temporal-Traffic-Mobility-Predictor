@@ -172,6 +172,15 @@ def predict(
         name: classify_speed(speed) for name, speed in predictions.items()
     }
     result["overall_congestion"] = classify_speed(result["mean_predicted_speed"])
+    # Anomaly detection based on historical reference speeds
+    from training.anomaly import detect_anomaly
+    # Gather historical speeds used for references (ignore None)
+    historical_vals = [speed for speed in references.values() if speed is not None]
+    detected, severity, a_type, explanation = detect_anomaly(historical_vals, result["mean_predicted_speed"])
+    result["anomaly_detected"] = detected
+    result["anomaly_severity"] = severity
+    result["anomaly_type"] = a_type
+    result["anomaly_explanation"] = explanation
     return result
 
 
