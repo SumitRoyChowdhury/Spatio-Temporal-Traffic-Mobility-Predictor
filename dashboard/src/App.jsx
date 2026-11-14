@@ -136,6 +136,22 @@ export default function App() {
             year earlier.
           </p>
         </div>
+        {/* Traffic Anomaly Detection panel */}
+        <div className="card anomaly-card">
+          <h3>Traffic Anomaly Detection</h3>
+          {result.anomaly_detected ? (
+            <>
+              <p className="subtle small">
+                <strong>Severity:</strong> {result.anomaly_severity}<br/>
+                <strong>Type:</strong> {result.anomaly_type}<br/>
+                <strong>Explanation:</strong> {result.anomaly_explanation}
+              </p>
+            </>
+          ) : (
+            <p className="subtle small">NORMAL TRAFFIC</p>
+          )}
+        </div>
+       <References result={result} />
         <ThemeToggle />
       </header>
 
@@ -236,6 +252,22 @@ function Results({ state, meta, sensor }) {
           <strong>Current data is not sufficient to predict the traffic speed.</strong>
           <p>No previous-day, previous-week or previous-year reading exists for this location and time.</p>
         </div>
+        {/* Traffic Anomaly Detection panel */}
+        <div className="card anomaly-card">
+          <h3>Traffic Anomaly Detection</h3>
+          {result.anomaly_detected ? (
+            <>
+              <p className="subtle small">
+                <strong>Severity:</strong> {result.anomaly_severity}<br/>
+                <strong>Type:</strong> {result.anomaly_type}<br/>
+                <strong>Explanation:</strong> {result.anomaly_explanation}
+              </p>
+            </>
+          ) : (
+            <p className="subtle small">NORMAL TRAFFIC</p>
+          )}
+        </div>
+       <References result={result} />
         <References result={result} />
       </>
     );
@@ -263,6 +295,22 @@ function Results({ state, meta, sensor }) {
                 <span className="congestion-dot" aria-hidden="true" />
                 <span className="congestion-label">{category}</span>
               </div>
+        {/* Traffic Anomaly Detection panel */}
+        <div className="card anomaly-card">
+          <h3>Traffic Anomaly Detection</h3>
+          {result.anomaly_detected ? (
+            <>
+              <p className="subtle small">
+                <strong>Severity:</strong> {result.anomaly_severity}<br/>
+                <strong>Type:</strong> {result.anomaly_type}<br/>
+                <strong>Explanation:</strong> {result.anomaly_explanation}
+              </p>
+            </>
+          ) : (
+            <p className="subtle small">NORMAL TRAFFIC</p>
+          )}
+        </div>
+       <References result={result} />
               {meta?.models?.[model.key] && (
                 <p className="subtle small">
                   Typical error ±{meta.models[model.key].mae.toFixed(1)} mph
@@ -279,7 +327,39 @@ function Results({ state, meta, sensor }) {
             <span className="congestion-dot" aria-hidden="true" />
             <span className="congestion-label">{overallCategory}</span>
           </div>
+        {/* Traffic Anomaly Detection panel */}
+        <div className="card anomaly-card">
+          <h3>Traffic Anomaly Detection</h3>
+          {result.anomaly_detected ? (
+            <>
+              <p className="subtle small">
+                <strong>Severity:</strong> {result.anomaly_severity}<br/>
+                <strong>Type:</strong> {result.anomaly_type}<br/>
+                <strong>Explanation:</strong> {result.anomaly_explanation}
+              </p>
+            </>
+          ) : (
+            <p className="subtle small">NORMAL TRAFFIC</p>
+          )}
         </div>
+       <References result={result} />
+        </div>
+        {/* Traffic Anomaly Detection panel */}
+        <div className="card anomaly-card">
+          <h3>Traffic Anomaly Detection</h3>
+          {result.anomaly_detected ? (
+            <>
+              <p className="subtle small">
+                <strong>Severity:</strong> {result.anomaly_severity}<br/>
+                <strong>Type:</strong> {result.anomaly_type}<br/>
+                <strong>Explanation:</strong> {result.anomaly_explanation}
+              </p>
+            </>
+          ) : (
+            <p className="subtle small">NORMAL TRAFFIC</p>
+          )}
+        </div>
+       <References result={result} />
         <p className="subtle small overall-subtext">
           {result.weighted_predicted_speed != null && (
             <>
