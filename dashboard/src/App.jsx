@@ -4,6 +4,7 @@ import Evaluation from "./Evaluation.jsx";
 import ThemeToggle from "./ThemeToggle.jsx";
 import AnomalyDetection from "./AnomalyDetection.jsx";
 import SensorHealth from "./SensorHealth.jsx";
+import Explainability from "./Explainability.jsx";
 
 const MODELS = [
   { key: "xgboost", label: "XGBoost" },
@@ -92,15 +93,18 @@ const TABS = [
   { id: "forecast", label: "Traffic Forecast" },
   { id: "anomaly", label: "Anomaly Detection" },
   { id: "health", label: "Sensor Health" },
+  { id: "explainability", label: "Explainable AI (XAI)" },
 ];
 
 function getInitialTab() {
   if (typeof window !== "undefined") {
     if (window.location.hash === "#anomaly") return "anomaly";
     if (window.location.hash === "#health") return "health";
+    if (window.location.hash === "#explainability") return "explainability";
     const params = new URLSearchParams(window.location.search);
     if (params.get("tab") === "anomaly") return "anomaly";
     if (params.get("tab") === "health") return "health";
+    if (params.get("tab") === "explainability") return "explainability";
   }
   return "forecast";
 }
@@ -117,6 +121,7 @@ export default function App() {
     function handleHash() {
       if (window.location.hash === "#anomaly") setActiveTab("anomaly");
       else if (window.location.hash === "#health") setActiveTab("health");
+      else if (window.location.hash === "#explainability") setActiveTab("explainability");
       else if (!window.location.hash || window.location.hash === "#forecast") setActiveTab("forecast");
     }
     window.addEventListener("hashchange", handleHash);
@@ -265,6 +270,11 @@ export default function App() {
       {/* ─── Sensor Health Monitoring tab ─── */}
       {activeTab === "health" && (
         <SensorHealth meta={meta} groups={groups} />
+      )}
+
+      {/* ─── Explainable AI (XAI) tab ─── */}
+      {activeTab === "explainability" && (
+        <Explainability meta={meta} groups={groups} />
       )}
     </div>
   );

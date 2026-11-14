@@ -1691,3 +1691,631 @@ button:disabled {
   font-size: 0.8rem;
 }
 
+/* ─────────────────────────────────────────────────────────
+   Explainable AI (XAI) Styles
+   ───────────────────────────────────────────────────────── */
+.xai-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 10px;
+  max-width: 1280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.xai-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  padding: 20px 24px;
+}
+
+.xai-header-titles h2 {
+  margin: 0 0 6px 0;
+  font-size: 1.4rem;
+  letter-spacing: -0.02em;
+}
+
+.xai-header-titles p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.xai-controls-card {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+}
+
+.xai-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.xai-form-submit-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid var(--gridline);
+}
+
+.xai-map-wrapper {
+  margin-top: 8px;
+}
+
+.primary-btn {
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+}
+
+.primary-btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.primary-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.secondary-btn {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.secondary-btn:hover {
+  background: var(--border);
+}
+
+.small-btn {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  cursor: pointer;
+  font-weight: 600;
+  padding: 4px 8px;
+  text-decoration: underline;
+}
+
+/* XAI Key Metrics */
+.xai-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.xai-metric-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 20px;
+}
+
+.xai-metric-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+}
+
+.xai-metric-val {
+  font-size: 1.8rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  color: var(--text-primary);
+}
+
+.xai-metric-val.primary {
+  color: var(--accent);
+}
+
+.xai-metric-val.positive {
+  color: var(--congestion-free-flow);
+}
+
+.xai-metric-val.negative {
+  color: var(--congestion-heavy);
+}
+
+.xai-metric-val .unit {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* Mathematical Reconciliation Card */
+.xai-reconciliation-card {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 20px;
+  background: var(--surface);
+  border-left: 4px solid var(--congestion-free-flow);
+}
+
+.xai-reconciliation-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.xai-check-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--congestion-free-flow-bg);
+  color: var(--congestion-free-flow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.95rem;
+}
+
+.xai-equation {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--page);
+  padding: 6px 14px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.xai-equation code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.85rem;
+  color: var(--text-primary);
+}
+
+.success-badge {
+  background: var(--congestion-free-flow-bg);
+  color: var(--congestion-free-flow);
+  border: 1px solid var(--congestion-free-flow-border);
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* Waterfall Chart */
+.xai-waterfall-card {
+  padding: 24px;
+}
+
+.xai-section-header {
+  margin-bottom: 18px;
+}
+
+.xai-section-header h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.15rem;
+}
+
+.xai-section-header p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.legend-chip {
+  display: inline-block;
+  margin-left: 12px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.legend-chip.pos {
+  background: var(--congestion-free-flow-bg);
+  color: var(--congestion-free-flow);
+}
+
+.legend-chip.neg {
+  background: var(--congestion-heavy-bg);
+  color: var(--congestion-heavy);
+}
+
+.xai-waterfall-wrapper {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.xai-waterfall-svg {
+  width: 100%;
+  min-width: 650px;
+  height: auto;
+  display: block;
+}
+
+.waterfall-row text {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* Natural Language Explanation Card */
+.xai-nl-card {
+  padding: 22px 24px;
+  background: var(--surface);
+  border-left: 4px solid var(--accent);
+}
+
+.xai-nl-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.xai-sparkle-icon {
+  font-size: 1.3rem;
+  color: var(--accent);
+}
+
+.xai-nl-header h3 {
+  margin: 0 0 2px 0;
+  font-size: 1.15rem;
+}
+
+.xai-nl-body {
+  margin-bottom: 16px;
+}
+
+.xai-nl-text {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.xai-disclaimer {
+  font-size: 0.8rem;
+  line-height: 1.4;
+  color: var(--muted);
+  border-top: 1px solid var(--gridline);
+  padding-top: 12px;
+}
+
+.disclaimer-label {
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+/* Reference Table & Table General */
+.xai-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+.xai-table th {
+  text-align: left;
+  padding: 10px 14px;
+  border-bottom: 2px solid var(--gridline);
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.xai-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--gridline);
+  color: var(--text-primary);
+}
+
+.shap-val {
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.shap-val.pos { color: var(--congestion-free-flow); }
+.shap-val.neg { color: var(--congestion-heavy); }
+.shap-val.neutral { color: var(--text-secondary); }
+
+.impact-pos {
+  background: var(--congestion-free-flow-bg);
+  color: var(--congestion-free-flow);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.impact-neg {
+  background: var(--congestion-heavy-bg);
+  color: var(--congestion-heavy);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.impact-neutral {
+  background: rgba(120, 120, 120, 0.1);
+  color: var(--text-secondary);
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.shap-pos-tag {
+  color: var(--congestion-free-flow);
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.shap-neg-tag {
+  color: var(--congestion-heavy);
+  font-weight: 600;
+  font-size: 0.82rem;
+}
+
+.model-badge {
+  background: var(--page);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+/* Multi-Model Comparison */
+.xai-models-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+}
+
+.xai-model-box {
+  background: var(--page);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.xai-model-box.active-model {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.xai-model-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.xai-model-box-header h4 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.weight-badge {
+  background: var(--series-weighted);
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.xai-model-box-pred {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.pred-num {
+  font-size: 1.9rem;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text-primary);
+}
+
+.pred-unit {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+}
+
+.xai-model-features {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  background: var(--surface);
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+.feature-driver {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.82rem;
+}
+
+.driver-label {
+  color: var(--text-secondary);
+}
+
+.driver-val.pos { color: var(--congestion-free-flow); font-weight: 600; }
+.driver-val.neg { color: var(--congestion-heavy); font-weight: 600; }
+
+.xai-model-rationale {
+  min-height: 48px;
+}
+
+.xai-model-rationale p {
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Global Interpretability & Beeswarm */
+.xai-global-card {
+  padding: 24px;
+}
+
+.xai-global-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.xai-toggle-group {
+  display: flex;
+  background: var(--page);
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.xai-toggle-btn {
+  background: transparent;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.xai-toggle-btn.active {
+  background: var(--surface);
+  color: var(--text-primary);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* Feature Importance Horizontal Bar */
+.xai-importance-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.xai-importance-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.xai-importance-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+}
+
+.feat-title {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.feat-val {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+}
+
+.xai-importance-track {
+  height: 12px;
+  background: var(--page);
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.xai-importance-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), var(--series-weighted));
+  border-radius: 6px;
+  transition: width 0.4s ease;
+}
+
+/* Beeswarm Plot */
+.xai-beeswarm-wrapper {
+  overflow-x: auto;
+  width: 100%;
+  padding-top: 10px;
+}
+
+.beeswarm-legend {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.legend-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.beeswarm-gradient-bar {
+  width: 100px;
+  height: 10px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, rgb(50, 80, 240), rgb(150, 40, 160), rgb(250, 0, 50));
+}
+
+.xai-beeswarm-svg {
+  width: 100%;
+  min-width: 650px;
+  height: auto;
+  display: block;
+}
+
+.beeswarm-tooltip {
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+
