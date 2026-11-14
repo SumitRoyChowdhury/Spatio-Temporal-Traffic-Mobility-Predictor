@@ -11,8 +11,8 @@ COPY dashboard/ ./
 RUN npm run build
 
 FROM python:3.14-slim
-# LightGBM and XGBoost need the OpenMP runtime.
-RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 \
+# LightGBM and XGBoost need OpenMP; C/C++ compiler for extension packages.
+RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 build-essential \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 ENV PYTHONUNBUFFERED=1 \

@@ -127,6 +127,34 @@ class ExplainabilityService:
         self._cached_background_data: Optional[pd.DataFrame] = None
         self._cached_global_importance: Dict[str, Any] = {}
         self._init_explainers()
+        self._init_table()
+
+    def _init_table(self) -> None:
+        """Ensure prediction_explanations table exists on startup (e.g. on Render/Neon)."""
+        try:
+            with self.connection_factory() as conn, conn.cursor() as cur:
+                cur.execute(
+                    """
+                    CREATE TABLE IF NOT EXISTS prediction_explanations (
+                        id BIGSERIAL PRIMARY KEY,
+                        sensor_id BIGINT NOT NULL REFERENCES sensors(sensor_id),
+                        target_timestamp TIMESTAMPTZ NOT NULL,
+                        model_name VARCHAR(50) NOT NULL,
+                        baseline_value DOUBLE PRECISION NOT NULL,
+                        predicted_value DOUBLE PRECISION NOT NULL,
+                        feature_values JSONB NOT NULL,
+                        shap_values JSONB NOT NULL,
+                        text_explanation TEXT NOT NULL,
+                        explanation_method VARCHAR(50) NOT NULL DEFAULT 'TreeSHAP',
+                        created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+                    );
+                    CREATE INDEX IF NOT EXISTS idx_pred_expl_sensor ON prediction_explanations(sensor_id);
+                    CREATE INDEX IF NOT EXISTS idx_pred_expl_created ON prediction_explanations(created_at);
+                    """
+                )
+                conn.commit()
+        except Exception:
+            LOGGER.warning("Could not auto-create prediction_explanations table")
 
     def _load_ensemble_weights(self) -> Dict[str, float]:
         path = self.artifacts_dir / ENSEMBLE_FILE
