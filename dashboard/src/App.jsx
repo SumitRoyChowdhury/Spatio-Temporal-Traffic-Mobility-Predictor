@@ -92,13 +92,31 @@ const TABS = [
   { id: "anomaly", label: "Anomaly Detection" },
 ];
 
+function getInitialTab() {
+  if (typeof window !== "undefined") {
+    if (window.location.hash === "#anomaly") return "anomaly";
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("tab") === "anomaly") return "anomaly";
+  }
+  return "forecast";
+}
+
 export default function App() {
-  const [activeTab, setActiveTab] = useState("forecast");
+  const [activeTab, setActiveTab] = useState(getInitialTab);
   const [meta, setMeta] = useState(null);
   const [metaError, setMetaError] = useState("");
   const [sensorId, setSensorId] = useState(DEFAULT_SENSOR);
   const [timestamp, setTimestamp] = useState(DEFAULT_TIMESTAMP);
   const [state, setState] = useState({ status: "idle" });
+
+  useEffect(() => {
+    function handleHash() {
+      if (window.location.hash === "#anomaly") setActiveTab("anomaly");
+      else if (!window.location.hash || window.location.hash === "#forecast") setActiveTab("forecast");
+    }
+    window.addEventListener("hashchange", handleHash);
+    return () => window.removeEventListener("hashchange", handleHash);
+  }, []);
 
   useEffect(() => {
     fetch("/api/meta")
@@ -155,7 +173,12 @@ export default function App() {
             role="tab"
             aria-selected={activeTab === tab.id}
             className={`nav-tab${activeTab === tab.id ? " nav-tab-active" : ""}`}
-            onClick={() => setActiveTab(tab.id)}
+            onClick={() => {
+              setActiveTab(tab.id);
+              if (typeof window !== "undefined") {
+                window.location.hash = tab.id === "forecast" ? "" : tab.id;
+              }
+            }}
           >
             {tab.label}
           </button>
