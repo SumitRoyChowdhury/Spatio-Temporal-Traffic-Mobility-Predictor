@@ -16,6 +16,26 @@
   --notice-bg: #fdf3e1;
   --notice-border: #f0d39a;
   --shadow: 0 1px 2px rgba(11, 11, 11, 0.04), 0 4px 16px rgba(11, 11, 11, 0.04);
+
+  --congestion-free-flow: #15803d;
+  --congestion-free-flow-bg: rgba(34, 197, 94, 0.12);
+  --congestion-free-flow-border: rgba(34, 197, 94, 0.28);
+  --congestion-free-flow-dot: #16a34a;
+
+  --congestion-moderate: #a16207;
+  --congestion-moderate-bg: rgba(234, 179, 8, 0.12);
+  --congestion-moderate-border: rgba(234, 179, 8, 0.28);
+  --congestion-moderate-dot: #eab308;
+
+  --congestion-heavy: #b91c1c;
+  --congestion-heavy-bg: rgba(239, 68, 68, 0.12);
+  --congestion-heavy-border: rgba(239, 68, 68, 0.28);
+  --congestion-heavy-dot: #dc2626;
+
+  --congestion-insufficient: #4b5563;
+  --congestion-insufficient-bg: rgba(107, 114, 128, 0.12);
+  --congestion-insufficient-border: rgba(107, 114, 128, 0.28);
+  --congestion-insufficient-dot: #6b7280;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -36,6 +56,26 @@
     --notice-bg: #2a2416;
     --notice-border: #5a4a22;
     --shadow: none;
+
+    --congestion-free-flow: #4ade80;
+    --congestion-free-flow-bg: rgba(34, 197, 94, 0.16);
+    --congestion-free-flow-border: rgba(34, 197, 94, 0.35);
+    --congestion-free-flow-dot: #22c55e;
+
+    --congestion-moderate: #facc15;
+    --congestion-moderate-bg: rgba(234, 179, 8, 0.16);
+    --congestion-moderate-border: rgba(234, 179, 8, 0.35);
+    --congestion-moderate-dot: #facc15;
+
+    --congestion-heavy: #f87171;
+    --congestion-heavy-bg: rgba(239, 68, 68, 0.16);
+    --congestion-heavy-border: rgba(239, 68, 68, 0.35);
+    --congestion-heavy-dot: #ef4444;
+
+    --congestion-insufficient: #9ca3af;
+    --congestion-insufficient-bg: rgba(156, 163, 175, 0.16);
+    --congestion-insufficient-border: rgba(156, 163, 175, 0.35);
+    --congestion-insufficient-dot: #9ca3af;
   }
 }
 
@@ -56,6 +96,26 @@
   --notice-bg: #2a2416;
   --notice-border: #5a4a22;
   --shadow: none;
+
+  --congestion-free-flow: #4ade80;
+  --congestion-free-flow-bg: rgba(34, 197, 94, 0.16);
+  --congestion-free-flow-border: rgba(34, 197, 94, 0.35);
+  --congestion-free-flow-dot: #22c55e;
+
+  --congestion-moderate: #facc15;
+  --congestion-moderate-bg: rgba(234, 179, 8, 0.16);
+  --congestion-moderate-border: rgba(234, 179, 8, 0.35);
+  --congestion-moderate-dot: #facc15;
+
+  --congestion-heavy: #f87171;
+  --congestion-heavy-bg: rgba(239, 68, 68, 0.16);
+  --congestion-heavy-border: rgba(239, 68, 68, 0.35);
+  --congestion-heavy-dot: #ef4444;
+
+  --congestion-insufficient: #9ca3af;
+  --congestion-insufficient-bg: rgba(156, 163, 175, 0.16);
+  --congestion-insufficient-border: rgba(156, 163, 175, 0.35);
+  --congestion-insufficient-dot: #9ca3af;
 }
 
 * {
@@ -359,6 +419,114 @@ button:disabled {
   font-weight: 500;
   color: var(--text-secondary);
   letter-spacing: 0;
+}
+
+/* Congestion classification badges */
+.congestion-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin: 6px 0 10px;
+  width: fit-content;
+  border: 1px solid transparent;
+}
+
+.congestion-tag-lg {
+  padding: 6px 14px;
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+.congestion-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.congestion-tag-lg .congestion-dot {
+  width: 10px;
+  height: 10px;
+}
+
+.congestion-free-flow {
+  background: var(--congestion-free-flow-bg);
+  color: var(--congestion-free-flow);
+  border-color: var(--congestion-free-flow-border);
+}
+.congestion-free-flow .congestion-dot {
+  background: var(--congestion-free-flow-dot);
+  box-shadow: 0 0 6px var(--congestion-free-flow-dot);
+}
+
+.congestion-moderate-traffic {
+  background: var(--congestion-moderate-bg);
+  color: var(--congestion-moderate);
+  border-color: var(--congestion-moderate-border);
+}
+.congestion-moderate-traffic .congestion-dot {
+  background: var(--congestion-moderate-dot);
+  box-shadow: 0 0 6px var(--congestion-moderate-dot);
+}
+
+.congestion-heavy-congestion {
+  background: var(--congestion-heavy-bg);
+  color: var(--congestion-heavy);
+  border-color: var(--congestion-heavy-border);
+}
+.congestion-heavy-congestion .congestion-dot {
+  background: var(--congestion-heavy-dot);
+  box-shadow: 0 0 6px var(--congestion-heavy-dot);
+}
+
+.congestion-insufficient-data {
+  background: var(--congestion-insufficient-bg);
+  color: var(--congestion-insufficient);
+  border-color: var(--congestion-insufficient-border);
+}
+.congestion-insufficient-data .congestion-dot {
+  background: var(--congestion-insufficient-dot);
+}
+
+.overall-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 20px;
+}
+
+.overall-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.overall-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.overall-subtext {
+  margin: 0;
+}
+
+.overall-subtext strong {
+  color: var(--text-primary);
+}
+
+.disclaimer {
+  font-size: 0.75rem;
+  font-style: italic;
+  color: var(--muted);
+  margin: 4px 0 0;
 }
 
 .summary {

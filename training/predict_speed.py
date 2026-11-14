@@ -21,6 +21,7 @@ import numpy as np
 import pandas as pd
 from dotenv import load_dotenv
 
+from training.congestion import classify_speed
 from training.reference_features import (
     FEATURE_NAMES,
     FORECAST_TYPE,
@@ -167,6 +168,10 @@ def predict(
     # When the target time is already in the database (e.g. a historical
     # check), report the recorded value alongside the predictions.
     result["actual_speed"] = valid_speed(speeds.get(target))
+    result["congestion_by_model"] = {
+        name: classify_speed(speed) for name, speed in predictions.items()
+    }
+    result["overall_congestion"] = classify_speed(result["mean_predicted_speed"])
     return result
 
 

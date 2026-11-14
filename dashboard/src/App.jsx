@@ -27,6 +27,45 @@ const utcFormat = new Intl.DateTimeFormat("en-GB", {
 const formatTime = (iso) => (iso ? `${utcFormat.format(new Date(iso))} UTC` : "");
 const formatSpeed = (value) => (value == null ? "—" : value.toFixed(1));
 
+function getCongestionCategory(result, modelKey) {
+  if (result.congestion_by_model && result.congestion_by_model[modelKey]) {
+    return result.congestion_by_model[modelKey];
+  }
+  const speed = result.predicted_speed_by_model?.[modelKey];
+  if (speed == null || Number.isNaN(speed) || !Number.isFinite(speed)) {
+    return "INSUFFICIENT DATA";
+  }
+  if (speed > 50) return "FREE FLOW";
+  if (speed >= 25) return "MODERATE TRAFFIC";
+  return "HEAVY CONGESTION";
+}
+
+function getOverallCongestion(result) {
+  if (result.overall_congestion) {
+    return result.overall_congestion;
+  }
+  const speed = result.mean_predicted_speed;
+  if (speed == null || Number.isNaN(speed) || !Number.isFinite(speed)) {
+    return "INSUFFICIENT DATA";
+  }
+  if (speed > 50) return "FREE FLOW";
+  if (speed >= 25) return "MODERATE TRAFFIC";
+  return "HEAVY CONGESTION";
+}
+
+function congestionClass(category) {
+  switch (category) {
+    case "FREE FLOW":
+      return "free-flow";
+    case "MODERATE TRAFFIC":
+      return "moderate-traffic";
+    case "HEAVY CONGESTION":
+      return "heavy-congestion";
+    default:
+      return "insufficient-data";
+  }
+}
+
 function sensorLabel(sensor) {
   return `${sensor.name || "Unnamed"} · ${sensor.sensor_id}`;
 }
@@ -202,41 +241,62 @@ function Results({ state, meta, sensor }) {
     );
   }
 
+  const overallCategory = getOverallCongestion(result);
+
   return (
     <>
       {heading}
       <div className="tiles">
-        {MODELS.map((model, index) => (
-          <article className="card tile" key={model.key}>
-            <p className="tile-label">
-              <span className={`swatch series-${index + 1}`} aria-hidden="true" />
-              {model.label}
-            </p>
-            <p className="tile-value">
-              {formatSpeed(result.predicted_speed_by_model[model.key])}
-              <span className="unit">mph</span>
-            </p>
-            {meta?.models?.[model.key] && (
-              <p className="subtle small">
-                Typical error ±{meta.models[model.key].mae.toFixed(1)} mph
+        {MODELS.map((model, index) => {
+          const category = getCongestionCategory(result, model.key);
+          return (
+            <article className="card tile" key={model.key}>
+              <p className="tile-label">
+                <span className={`swatch series-${index + 1}`} aria-hidden="true" />
+                {model.label}
               </p>
-            )}
-          </article>
-        ))}
+              <p className="tile-value">
+                {formatSpeed(result.predicted_speed_by_model[model.key])}
+                <span className="unit">mph</span>
+              </p>
+              <div className={`congestion-tag congestion-${congestionClass(category)}`}>
+                <span className="congestion-dot" aria-hidden="true" />
+                <span className="congestion-label">{category}</span>
+              </div>
+              {meta?.models?.[model.key] && (
+                <p className="subtle small">
+                  Typical error ±{meta.models[model.key].mae.toFixed(1)} mph
+                </p>
+              )}
+            </article>
+          );
+        })}
       </div>
-      <p className="subtle small summary">
-        {result.weighted_predicted_speed != null && (
-          <>
-            Weighted ensemble: <strong>{formatSpeed(result.weighted_predicted_speed)} mph</strong> ·{" "}
-          </>
-        )}
-        Simple average: <strong>{formatSpeed(result.mean_predicted_speed)} mph</strong>
-        {result.actual_speed != null && (
-          <>
-            {" "}· Recorded speed at this time: <strong>{formatSpeed(result.actual_speed)} mph</strong>
-          </>
-        )}
-      </p>
+      <div className="card overall-card">
+        <div className="overall-header">
+          <span className="overall-title">Overall traffic condition</span>
+          <div className={`congestion-tag congestion-tag-lg congestion-${congestionClass(overallCategory)}`}>
+            <span className="congestion-dot" aria-hidden="true" />
+            <span className="congestion-label">{overallCategory}</span>
+          </div>
+        </div>
+        <p className="subtle small overall-subtext">
+          {result.weighted_predicted_speed != null && (
+            <>
+              Weighted ensemble: <strong>{formatSpeed(result.weighted_predicted_speed)} mph</strong> ·{" "}
+            </>
+          )}
+          Simple average: <strong>{formatSpeed(result.mean_predicted_speed)} mph</strong>
+          {result.actual_speed != null && (
+            <>
+              {" "}· Recorded speed at this time: <strong>{formatSpeed(result.actual_speed)} mph</strong>
+            </>
+          )}
+        </p>
+        <p className="subtle small disclaimer">
+          Classification derived from model-predicted vehicle speed. Not an official traffic condition report.
+        </p>
+      </div>
       <References result={result} />
     </>
   );

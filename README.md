@@ -129,9 +129,29 @@ run. Then predict:
 
 Timestamps without an offset are treated as UTC, like ingestion, and are rounded
 to the nearest five-minute slot. The JSON output lists each reference's
-timestamp and speed, which references were used, each model's prediction and
-their mean. When the target time is already in the database, it also shows
+timestamp and speed, which references were used, each model's prediction,
+their mean, and traffic congestion classifications (`congestion_by_model` and
+`overall_congestion`). When the target time is already in the database, it also shows
 the recorded `actual_speed`.
+
+### Traffic congestion classification
+
+Predicted speeds are mapped into three standardized categories based on configurable thresholds:
+
+| Predicted speed | Classification | Indicator |
+| --- | --- | --- |
+| Above 50 mph | FREE FLOW | Green |
+| 25–50 mph | MODERATE TRAFFIC | Yellow |
+| Below 25 mph | HEAVY CONGESTION | Red |
+| Missing, invalid, NaN, or infinite | INSUFFICIENT DATA | Grey |
+
+Exact boundary rules:
+- Speed > 50: `FREE FLOW`
+- Speed >= 25 and <= 50: `MODERATE TRAFFIC`
+- Speed < 25: `HEAVY CONGESTION`
+- Missing / invalid / NaN / infinite: `INSUFFICIENT DATA`
+
+*Note: Congestion categories are model-derived classifications based on predicted speeds and do not represent an official road authority condition report.*
 
 The current dataset covers only January to May 2017, so the previous-year
 reference is never available. The models learn from the previous-day and
