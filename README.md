@@ -379,6 +379,49 @@ GridLock includes an Explainable AI (XAI) engine powered by **TreeSHAP** (Tree S
   - `text_explanation` (TEXT)
   - `created_at` (TIMESTAMPTZ)
 
+---
+
+## Interactive Traffic Heatmap – Smart Traffic Intelligence Map
+
+GridLock provides an advanced **Geographical Traffic Intelligence Heatmap** displaying all 325 highway monitoring stations with real-time congestion classification, multi-model predictions, temporal playback, and actual vs. predicted comparative analytics.
+
+### Key Map Features & Capabilities
+
+1. **Equirectangular Geographical Projection**:
+   - Maps latitude and longitude accurately scaled by $\cos(\text{lat})$ to prevent regional distortion.
+   - Smooth mouse panning (drag & drop), stepped zoom ($\pm 0.3\times$), view reset, and full-screen display.
+   - **Marker Clustering**: Automatically groups dense adjacent sensors into dynamic cluster badges when zoomed out, unpacking into individual markers when zoomed in.
+
+2. **Configurable Congestion Ratio ($S / F$)**:
+   Instead of universal hardcoded speed limits, congestion is evaluated relative to the road's design or reference free-flow speed ($F$, default 65 mph on freeways, 55 mph on highways, 45 mph on arterials):
+   $$\text{Congestion Ratio} = \frac{\text{Current Speed } (S)}{\text{Reference Free-Flow Speed } (F)}$$
+   - **FREE FLOW** (Green `#15803d`): $\text{Ratio} \ge 0.70$
+   - **MODERATE TRAFFIC** (Yellow `#eab308`): $0.40 \le \text{Ratio} < 0.70$
+   - **HEAVY CONGESTION** (Red `#dc2626`): $\text{Ratio} < 0.40$
+   - **NO DATA** (Gray `#6b7280`): Observation unavailable or missing.
+
+3. **Temporal Playback & Filter System**:
+   - Continuous historical flow playback (advances 5-minute intervals automatically).
+   - Presets for Morning Rush Hour (08:30 UTC), Midday Flow (13:00 UTC), Evening Congestion (17:30 UTC), and Weekend Traffic.
+   - Multi-criteria filtering: Congestion level, Data Type (Actual, Predicted, Both), Model (Ensemble, LightGBM, XGBoost, CatBoost), Highway corridor, and debounced text search.
+
+4. **24-Hour Actual vs Predicted Comparison**:
+   - Aligned time-series line chart spanning $\pm 12$ hours around the selected timestamp for any chosen sensor.
+   - Computes live **MAE** (Mean Absolute Error) and **MAPE** (Mean Absolute Percentage Error).
+
+### Traffic Heatmap REST APIs
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/heatmap/sensors` | List all 325 sensors with coordinates, metadata, and free-flow design speeds |
+| `GET` | `/api/heatmap/traffic` | Complete traffic condition matrix for a timestamp, model, and congestion filters |
+| `GET` | `/api/heatmap/timeline` | Dataset temporal bounds, 5-minute sampling step, and scenario presets |
+| `GET` | `/api/heatmap/models` | List available ML prediction models |
+| `GET` | `/api/heatmap/statistics` | Aggregated traffic counts, average speed, and congestion ratios |
+| `GET` | `/api/heatmap/sensor/:id` | Full sensor metadata, current speeds, and historical temporal references |
+| `GET` | `/api/heatmap/comparison/:id` | 24-hour actual vs predicted speed time series with MAE & MAPE |
+| `PATCH` | `/api/heatmap/sensor/:id/config` | Update reference free-flow speed or road category for a sensor |
+
 ### Running the Test Suite
 
 Run all unit and integration tests:
