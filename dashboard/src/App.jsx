@@ -5,6 +5,7 @@ import ThemeToggle from "./ThemeToggle.jsx";
 import AnomalyDetection from "./AnomalyDetection.jsx";
 import SensorHealth from "./SensorHealth.jsx";
 import Explainability from "./Explainability.jsx";
+import TrafficHeatmap from "./TrafficHeatmap.jsx";
 
 const MODELS = [
   { key: "xgboost", label: "XGBoost" },
@@ -91,6 +92,7 @@ function groupSensors(sensors) {
 /* ─── TABS ─── */
 const TABS = [
   { id: "forecast", label: "Traffic Forecast" },
+  { id: "heatmap", label: "Traffic Heatmap" },
   { id: "anomaly", label: "Anomaly Detection" },
   { id: "health", label: "Sensor Health" },
   { id: "explainability", label: "Explainable AI (XAI)" },
@@ -98,10 +100,12 @@ const TABS = [
 
 function getInitialTab() {
   if (typeof window !== "undefined") {
+    if (window.location.hash === "#heatmap") return "heatmap";
     if (window.location.hash === "#anomaly") return "anomaly";
     if (window.location.hash === "#health") return "health";
     if (window.location.hash === "#explainability") return "explainability";
     const params = new URLSearchParams(window.location.search);
+    if (params.get("tab") === "heatmap") return "heatmap";
     if (params.get("tab") === "anomaly") return "anomaly";
     if (params.get("tab") === "health") return "health";
     if (params.get("tab") === "explainability") return "explainability";
@@ -119,7 +123,8 @@ export default function App() {
 
   useEffect(() => {
     function handleHash() {
-      if (window.location.hash === "#anomaly") setActiveTab("anomaly");
+      if (window.location.hash === "#heatmap") setActiveTab("heatmap");
+      else if (window.location.hash === "#anomaly") setActiveTab("anomaly");
       else if (window.location.hash === "#health") setActiveTab("health");
       else if (window.location.hash === "#explainability") setActiveTab("explainability");
       else if (!window.location.hash || window.location.hash === "#forecast") setActiveTab("forecast");
@@ -260,6 +265,11 @@ export default function App() {
 
           <Evaluation />
         </>
+      )}
+
+      {/* ─── Traffic Heatmap tab ─── */}
+      {activeTab === "heatmap" && (
+        <TrafficHeatmap meta={meta} groups={groups} onSelectSensor={setSensorId} />
       )}
 
       {/* ─── Anomaly Detection tab ─── */}
