@@ -37,6 +37,7 @@ from training.predict_speed import (
 )
 from training.sensor_health import SensorHealthService
 from training.explainability import ExplainabilityService
+from training.heatmap import HeatmapService
 
 LOGGER = logging.getLogger("gridlock.api")
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
@@ -89,6 +90,7 @@ class DashboardServer(ThreadingHTTPServer):
         self._meta: dict[str, Any] | None = None
         self.health_service = SensorHealthService()
         self.explainability_service = ExplainabilityService(artifacts_dir)
+        self.heatmap_service = HeatmapService(artifacts_dir, models=self.models, metrics=self.metrics)
         ensemble_path = artifacts_dir / ENSEMBLE_FILE
         self.evaluation: dict[str, Any] | None = (
             json.loads(ensemble_path.read_text(encoding="utf-8"))
@@ -260,6 +262,49 @@ class DashboardHandler(BaseHTTPRequestHandler):
                 limit = int((query.get("limit") or ["20"])[0])
                 history = self.server.explainability_service.get_explanation_history(sid, limit=limit)
                 self._json(HTTPStatus.OK, {"sensor_id": sid, "history": history})
+            # --- Interactive Traffic Heatmap APIs ---
+            elif path == "/api/heatmap/sensors":
+                self._json(HTTPStatus.OK, {"sensors": self.server.heatmap_service.get_sensors_list()})
+            elif path == "/api/heatmap/timeline":
+                self._json(HTTPStatus.OK, self.server.heatmap_service.get_timeline())
+            elif path == "/api/heatmap/models":
+                self._json(HTTPStatus.OK, {"models": self.server.heatmap_service.get_available_models()})
+            elif path in ("/api/heatmap/traffic", "/api/heatmap/predictions"):
+                ts = (query.get("timestamp") or ["2017-05-15T08:30:00"])[0]
+                model = (query.get("model") or ["ensemble"])[0]
+                dtype = (query.get("data_type") or ["both"])[0]
+                congestion = (query.get("congestion_level") or (query.get("congestion") or ["ALL"]))[0]
+                search = (query.get("search") or [None])[0]
+                fwy = (query.get("freeway") or [None])[0]
+                result = self.server.heatmap_service.get_traffic_heatmap(
+                    ts, model_name=model, data_type=dtype, congestion_filter=congestion, search=search, freeway_filter=fwy
+                )
+                self._json(HTTPStatus.OK, result)
+            elif path == "/api/heatmap/statistics":
+                ts = (query.get("timestamp") or ["2017-05-15T08:30:00"])[0]
+                model = (query.get("model") or ["ensemble"])[0]
+                dtype = (query.get("data_type") or ["both"])[0]
+                congestion = (query.get("congestion_level") or (query.get("congestion") or ["ALL"]))[0]
+                search = (query.get("search") or [None])[0]
+                fwy = (query.get("freeway") or [None])[0]
+                result = self.server.heatmap_service.get_traffic_heatmap(
+                    ts, model_name=model, data_type=dtype, congestion_filter=congestion, search=search, freeway_filter=fwy
+                )
+                self._json(HTTPStatus.OK, result["statistics"])
+            elif re.match(r"^/api/heatmap/comparison/(\d+)$", path):
+                match = re.match(r"^/api/heatmap/comparison/(\d+)$", path)
+                sid = int(match.group(1))
+                ts = (query.get("timestamp") or ["2017-05-15T08:30:00"])[0]
+                hours = int((query.get("hours") or ["12"])[0])
+                model = (query.get("model") or ["ensemble"])[0]
+                result = self.server.heatmap_service.get_sensor_comparison(sid, ts, hours=hours, model_name=model)
+                self._json(HTTPStatus.OK, result)
+            elif re.match(r"^/api/heatmap/sensor/(\d+)$", path):
+                match = re.match(r"^/api/heatmap/sensor/(\d+)$", path)
+                sid = int(match.group(1))
+                ts = (query.get("timestamp") or [None])[0]
+                result = self.server.heatmap_service.get_sensor_detail(sid, ts)
+                self._json(HTTPStatus.OK, result)
             elif path.startswith("/api/"):
                 self._json(HTTPStatus.NOT_FOUND, {"error": "Unknown endpoint."})
             else:
@@ -311,6 +356,19 @@ class DashboardHandler(BaseHTTPRequestHandler):
             # POST /api/explainability/prediction
             if path == "/api/explainability/prediction":
                 self._explain_prediction({}, body)
+                return
+
+            # PATCH /api/heatmap/sensor/<id>/config
+            heatmap_config_match = re.match(r"^/api/heatmap/sensor/(\d+)/config$", path)
+            if heatmap_config_match:
+                sensor_id = int(heatmap_config_match.group(1))
+                ff_speed = body.get("free_flow_speed")
+                road_cat = body.get("road_category")
+                sp_unit = body.get("speed_unit")
+                updated = self.server.heatmap_service.update_sensor_config(
+                    sensor_id, free_flow_speed=ff_speed, road_category=road_cat, speed_unit=sp_unit
+                )
+                self._json(HTTPStatus.OK, updated)
                 return
 
             self._json(HTTPStatus.NOT_FOUND, {"error": f"Unknown endpoint: {path}"})
