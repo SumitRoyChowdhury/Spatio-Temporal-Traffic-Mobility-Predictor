@@ -15,7 +15,8 @@
     "@prisma/client": "^7.10.1",
     "csv-parse": "^7.0.3",
     "dotenv": "^17.4.2",
-    "pg": "^8.23.1"
+    "pg": "^8.23.1",
+    "traffic-flow-toolkit-atharva": "^1.0.0"
   },
   "devDependencies": {
     "prisma": "^7.10.1"

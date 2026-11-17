@@ -5,6 +5,8 @@ import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { PrismaClient } from "@prisma/client";
 import { Pool } from "pg";
+import { enrichTrafficObservations } from "./traffic-analysis.js";
+
 import {
   isIrregularTimestamp,
   normalizeSpeed,
@@ -189,7 +191,7 @@ async function flushBatch(prisma, observations, quarantineRecords, totals) {
     }
   }
 
-  const candidates = [...unique.values()];
+  const candidates = enrichTrafficObservations([...unique.values()]);
   const existing = await findExistingObservations(prisma, candidates);
   const toInsert = [];
   const externalQuarantine = [];
