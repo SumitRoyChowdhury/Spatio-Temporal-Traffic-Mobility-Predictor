@@ -4,3 +4,12 @@ node_modules/
 __pycache__/
 *.py[cod]
 dashboard/dist/
+# Android build output and machine-specific settings (APKs are never committed)
+*.apk
+*.aab
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/release.keystore
+android/keystore.properties

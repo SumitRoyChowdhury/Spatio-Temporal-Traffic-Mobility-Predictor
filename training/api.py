@@ -43,6 +43,10 @@ from training.simulator import SimulatorService
 LOGGER = logging.getLogger("gridlock.api")
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 STATIC_DIR = PROJECT_ROOT / "dashboard" / "dist"
+# Requests handled at once. ThreadingHTTPServer otherwise starts one thread per
+# request with no limit, and bursts of model-heavy requests (heatmap playback,
+# explanations) can push the 512 MB hosting instance over its memory limit.
+MAX_CONCURRENT_REQUESTS = 4
 
 
 def _float(value: object) -> float | None:
@@ -82,15 +86,22 @@ def load_meta(metrics: dict[str, Any]) -> dict[str, Any]:
 
 class DashboardServer(ThreadingHTTPServer):
     daemon_threads = True
+    # socketserver's default listen backlog is 5, so a burst of dashboard
+    # requests (one page load fires several at once) got "connection reset".
+    request_queue_size = 128
 
     def __init__(self, address, artifacts_dir: Path):
         super().__init__(address, DashboardHandler)
         self.artifacts_dir = artifacts_dir
+        self._request_slots = threading.BoundedSemaphore(MAX_CONCURRENT_REQUESTS)
         self.models, self.metrics = load_models(artifacts_dir)
         self.model_lock = threading.Lock()
         self._meta: dict[str, Any] | None = None
         self.health_service = SensorHealthService()
-        self.explainability_service = ExplainabilityService(artifacts_dir)
+        # All services share this single copy of the models.
+        self.explainability_service = ExplainabilityService(
+            artifacts_dir, models=self.models, metrics=self.metrics
+        )
         self.heatmap_service = HeatmapService(artifacts_dir, models=self.models, metrics=self.metrics)
         self.simulator_service = SimulatorService(artifacts_dir=artifacts_dir, heatmap_service=self.heatmap_service)
         ensemble_path = artifacts_dir / ENSEMBLE_FILE
@@ -110,6 +121,13 @@ class DashboardServer(ThreadingHTTPServer):
                 self.health_service.run_monitoring_cycle()
             except Exception:
                 LOGGER.exception("Error in background health monitor loop")
+
+    def process_request_thread(self, request, client_address) -> None:
+        # Each connection is still accepted at once (so bursts are not reset
+        # by the small listen backlog), but only MAX_CONCURRENT_REQUESTS
+        # handlers do work at a time; the rest wait here, holding no model data.
+        with self._request_slots:
+            super().process_request_thread(request, client_address)
 
     def server_close(self) -> None:
         self._stop_monitor.set()

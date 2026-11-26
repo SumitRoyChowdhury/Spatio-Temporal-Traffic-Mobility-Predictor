@@ -1,0 +1,55 @@
+plugins {
+    id "com.android.application"
+}
+
+// Release signing reads android/keystore.properties (not committed). Without
+// it, the release APK is built unsigned and Android will refuse to install it.
+def keystoreFile = rootProject.file("keystore.properties")
+def keystore = new Properties()
+if (keystoreFile.exists()) {
+    keystoreFile.withInputStream { keystore.load(it) }
+}
+
+android {
+    namespace "com.gridlock.dashboard"
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.gridlock.dashboard"
+        minSdk 26
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+        // The hosted dashboard the app opens; change it here if the URL moves.
+        buildConfigField "String", "DASHBOARD_URL", "\"https://gridlock-dashboard-48wd.onrender.com/\""
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    signingConfigs {
+        release {
+            if (keystoreFile.exists()) {
+                storeFile rootProject.file(keystore["storeFile"])
+                storePassword keystore["storePassword"]
+                keyAlias keystore["keyAlias"]
+                keyPassword keystore["keyPassword"]
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            if (keystoreFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}

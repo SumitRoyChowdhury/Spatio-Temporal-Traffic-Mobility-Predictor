@@ -17,7 +17,6 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import numpy as np
 import pandas as pd
-import shap
 
 from training.db import connect
 from training.evaluate_ensemble import ENSEMBLE_FILE
@@ -57,6 +56,42 @@ EXPLANATION_DISCLAIMER = (
     "SHAP explains how the machine learning model calculated its prediction from input features. "
     "It attributes feature influence according to Shapley value theory and does not assert physical causation."
 )
+
+
+def native_tree_shap(model_name: str, model: Any, frame: pd.DataFrame) -> Tuple[np.ndarray, np.ndarray]:
+    """Exact TreeSHAP values using each library's built-in implementation.
+
+    Returns ``(values, base_values)`` with shapes ``(n_rows, n_features)`` and
+    ``(n_rows,)``. This replaces ``shap.TreeExplainer``, which builds its own
+    copy of every tree in memory (about 400 MB for the CatBoost model alone)
+    and pushed the API past the 512 MB limit of the hosting instance.
+    """
+    if model_name == "xgboost":
+        import xgboost as xgb
+
+        booster = model.get_booster()
+        # Match XGBRegressor.predict, which stops at the early-stopping iteration.
+        best = getattr(model, "best_iteration", None)
+        iteration_range = (0, best + 1) if best is not None else (0, 0)
+        contribs = booster.predict(
+            xgb.DMatrix(frame, enable_categorical=True),
+            pred_contribs=True,
+            iteration_range=iteration_range,
+        )
+    elif model_name == "lightgbm":
+        contribs = model.predict(frame, pred_contrib=True)
+    elif model_name == "catboost":
+        from catboost import Pool
+
+        contribs = model.get_feature_importance(
+            Pool(frame, cat_features=["sensor_id"]), type="ShapValues"
+        )
+    else:
+        raise ValueError(f"Unsupported model: {model_name}")
+
+    contribs = np.asarray(contribs, dtype=np.float64)
+    # All three libraries append the expected value (baseline) as the last column.
+    return contribs[:, :-1], contribs[:, -1]
 
 
 def generate_natural_language_explanation(
@@ -116,17 +151,25 @@ def generate_natural_language_explanation(
 
 
 class ExplainabilityService:
-    """Service providing SHAP TreeExplainer computations, model comparisons, and global importances."""
+    """Service providing TreeSHAP computations, model comparisons, and global importances."""
 
-    def __init__(self, artifacts_dir: Optional[Path] = None, connection_factory=connect):
+    def __init__(
+        self,
+        artifacts_dir: Optional[Path] = None,
+        connection_factory=connect,
+        models: Optional[Dict[str, Any]] = None,
+        metrics: Optional[Dict[str, Any]] = None,
+    ):
         self.artifacts_dir = artifacts_dir or (PROJECT_ROOT / "model_artifacts")
         self.connection_factory = connection_factory
-        self.models, self.metrics = load_models(self.artifacts_dir)
+        # Reuse the server's already-loaded models when given, instead of a second copy.
+        if models is not None and metrics is not None:
+            self.models, self.metrics = models, metrics
+        else:
+            self.models, self.metrics = load_models(self.artifacts_dir)
         self.ensemble_weights = self._load_ensemble_weights()
-        self._explainers: Dict[str, Any] = {}
         self._cached_background_data: Optional[pd.DataFrame] = None
         self._cached_global_importance: Dict[str, Any] = {}
-        self._init_explainers()
         self._init_table()
 
     def _init_table(self) -> None:
@@ -166,17 +209,10 @@ class ExplainabilityService:
                 pass
         return {"xgboost": 0.333, "catboost": 0.333, "lightgbm": 0.334}
 
-    def _init_explainers(self) -> None:
-        """Initialize and cache TreeExplainer instances for all three tree-based models."""
-        try:
-            if "xgboost" in self.models and "xgboost" not in self._explainers:
-                self._explainers["xgboost"] = shap.TreeExplainer(self.models["xgboost"])
-            if "lightgbm" in self.models and "lightgbm" not in self._explainers:
-                self._explainers["lightgbm"] = shap.TreeExplainer(self.models["lightgbm"])
-            if "catboost" in self.models and "catboost" not in self._explainers:
-                self._explainers["catboost"] = shap.TreeExplainer(self.models["catboost"])
-        except Exception:
-            LOGGER.exception("Failed to initialize one or more SHAP TreeExplainers")
+    def _shap_values(self, model_name: str, frame: pd.DataFrame) -> np.ndarray:
+        """SHAP value matrix (n_rows, n_features) for one model."""
+        values, _ = native_tree_shap(model_name, self.models[model_name], frame)
+        return values
 
     def _get_background_sample(self, n_samples: int = 250) -> pd.DataFrame:
         """Generate a reproducible, representative background sample for global feature analysis."""
@@ -240,13 +276,9 @@ class ExplainabilityService:
         model = self.models[model_name]
         pred = float(model.predict(frame)[0])
 
-        if model_name not in self._explainers:
-            self._explainers[model_name] = shap.TreeExplainer(model)
-        explainer = self._explainers[model_name]
-
-        shap_res = explainer(frame)
-        base = float(shap_res.base_values[0])
-        raw_vals = [float(v) for v in shap_res.values[0]]
+        values, base_values = native_tree_shap(model_name, model, frame)
+        base = float(base_values[0])
+        raw_vals = [float(v) for v in values[0]]
         return base, pred, raw_vals
 
     def explain_prediction(
@@ -482,15 +514,11 @@ class ExplainabilityService:
             weights = self.ensemble_weights
             combined_mean_abs = np.zeros(len(FEATURE_NAMES), dtype=np.float64)
             for m in ("xgboost", "catboost", "lightgbm"):
-                explainer = self._explainers.get(m) or shap.TreeExplainer(self.models[m])
-                shap_vals = explainer.shap_values(sample_df)
-                mean_abs = np.abs(shap_vals).mean(axis=0)
+                mean_abs = np.abs(self._shap_values(m, sample_df)).mean(axis=0)
                 combined_mean_abs += weights.get(m, 0.333) * mean_abs
             importances = combined_mean_abs
         elif m_name in self.models:
-            explainer = self._explainers.get(m_name) or shap.TreeExplainer(self.models[m_name])
-            shap_vals = explainer.shap_values(sample_df)
-            importances = np.abs(shap_vals).mean(axis=0)
+            importances = np.abs(self._shap_values(m_name, sample_df)).mean(axis=0)
         else:
             raise ValueError(f"Unknown model: {model_name}")
 
@@ -532,12 +560,12 @@ class ExplainabilityService:
             weights = self.ensemble_weights
             combined_shap = np.zeros((len(sample_df), len(FEATURE_NAMES)), dtype=np.float64)
             for m in ("xgboost", "catboost", "lightgbm"):
-                explainer = self._explainers.get(m) or shap.TreeExplainer(self.models[m])
-                combined_shap += weights.get(m, 0.333) * np.array(explainer.shap_values(sample_df))
+                combined_shap += weights.get(m, 0.333) * self._shap_values(m, sample_df)
             shap_matrix = combined_shap
+        elif m_name in self.models:
+            shap_matrix = self._shap_values(m_name, sample_df)
         else:
-            explainer = self._explainers.get(m_name) or shap.TreeExplainer(self.models[m_name])
-            shap_matrix = np.array(explainer.shap_values(sample_df))
+            raise ValueError(f"Unknown model: {model_name}")
 
         points = []
         for i in range(len(sample_df)):

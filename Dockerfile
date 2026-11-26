@@ -15,8 +15,11 @@ FROM python:3.12-slim
 RUN apt-get update && apt-get install -y --no-install-recommends libgomp1 \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
+# MALLOC_ARENA_MAX limits glibc to two memory arenas, so request threads do not
+# each grow a private heap on the 512 MB instance.
 ENV PYTHONUNBUFFERED=1 \
-    OMP_NUM_THREADS=1
+    OMP_NUM_THREADS=1 \
+    MALLOC_ARENA_MAX=2
 COPY requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 COPY training/ training/
